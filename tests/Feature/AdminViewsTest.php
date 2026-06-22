@@ -19,11 +19,11 @@ class AdminViewsTest extends TestCase
 
         // Access registered teams
         $response1 = $this->get(route('admin.tim-terdaftar'));
-        $response1->assertRedirect(route('dashboard'));
+        $response1->assertStatus(403);
 
         // Access submissions
         $response2 = $this->get(route('admin.submission'));
-        $response2->assertRedirect(route('dashboard'));
+        $response2->assertStatus(403);
     }
 
     public function test_admin_can_access_tim_terdaftar_view()
