@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Tim;
+use App\Models\DokumenRegistrasi;
 use App\Models\Pembayaran;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -101,6 +102,14 @@ class PaymentVerificationTest extends TestCase
             'batch' => 1,
         ]);
 
+        // Create approved registration document (required before team can advance)
+        DokumenRegistrasi::create([
+            'id_tim' => $tim->id_tim,
+            'link_file_registrasi' => 'dokumen_registrasi/test.pdf',
+            'status_registrasi' => 'berhasil',
+            'uploaded_at' => now(),
+        ]);
+
         $pembayaran = Pembayaran::create([
             'id_tim' => $tim->id_tim,
             'bukti_pembayaran' => 'bukti_pembayaran/test.png',
@@ -126,6 +135,55 @@ class PaymentVerificationTest extends TestCase
         $this->assertDatabaseHas('tim', [
             'id_tim' => $tim->id_tim,
             'status_seleksi' => 'penyisihan',
+        ]);
+    }
+
+    public function test_admin_approve_payment_does_not_advance_team_without_approved_document()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $tim = Tim::create([
+            'id_user' => $user->id_user,
+            'nama_tim' => 'Test Team No Doc',
+            'universitas' => 'Test University',
+            'status_seleksi' => 'belum_seleksi',
+            'batch' => 1,
+        ]);
+
+        // Create a PENDING (not approved) registration document
+        DokumenRegistrasi::create([
+            'id_tim' => $tim->id_tim,
+            'link_file_registrasi' => 'dokumen_registrasi/pending.pdf',
+            'status_registrasi' => 'pending',
+            'uploaded_at' => now(),
+        ]);
+
+        $pembayaran = Pembayaran::create([
+            'id_tim' => $tim->id_tim,
+            'bukti_pembayaran' => 'bukti_pembayaran/test2.png',
+            'status_pembayaran' => 'pending',
+            'uploaded_at' => now(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->post(route('admin.pembayaran.update', $pembayaran->id_pembayaran), [
+            'status' => 'berhasil',
+        ]);
+
+        $response->assertRedirect();
+
+        // Assert payment is approved
+        $this->assertDatabaseHas('pembayaran', [
+            'id_pembayaran' => $pembayaran->id_pembayaran,
+            'status_pembayaran' => 'berhasil',
+        ]);
+
+        // Assert team status remains belum_seleksi (document not yet approved)
+        $this->assertDatabaseHas('tim', [
+            'id_tim' => $tim->id_tim,
+            'status_seleksi' => 'belum_seleksi',
         ]);
     }
 
