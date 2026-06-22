@@ -64,6 +64,14 @@ class Tim extends Model
     }
 
     /**
+     * Get the registration document for the team (snake_case alias).
+     */
+    public function dokumen_registrasi(): HasOne
+    {
+        return $this->hasOne(DokumenRegistrasi::class, 'id_tim', 'id_tim');
+    }
+
+    /**
      * Get the payment details for the team.
      */
     public function pembayaran(): HasOne
