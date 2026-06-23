@@ -327,7 +327,7 @@ const closeTeamDetails = () => {
                                     class="rounded border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase"
                                     :class="
                                         member.role === 'ketua'
-                                            ? 'border-amber-200 bg-amber-50 text-amber-700'
+                                            ? 'border-blue-900 bg-blue-900 text-white'
                                             : 'border-slate-200 bg-slate-100 text-slate-600'
                                     "
                                 >

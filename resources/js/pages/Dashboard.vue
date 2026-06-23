@@ -2,7 +2,6 @@
 import { Head, Link } from '@inertiajs/vue3';
 import {
     Download,
-    ExternalLink,
     User,
     Users,
     Calendar,
@@ -72,14 +71,34 @@ const getTimelineStatus = (start, end) => {
         };
     } else if (now >= startD && now <= endD) {
         return {
-            label: 'Berlangsung',
+            label: 'Sedang Berlangsung',
             class: 'bg-amber-100 text-amber-700 border-amber-200',
         };
     } else {
-        return {
-            label: 'Akan Datang',
-            class: 'bg-blue-50 text-blue-600 border-blue-100',
-        };
+        const diffMs = startD - now;
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffDays <= 0) {
+            return {
+                label: 'Dimulai hari ini',
+                class: 'bg-blue-100 text-blue-700 border-blue-200',
+            };
+        } else if (diffDays === 1) {
+            return {
+                label: 'Dimulai besok',
+                class: 'bg-blue-100 text-blue-700 border-blue-200',
+            };
+        } else if (diffDays <= 7) {
+            return {
+                label: `Dimulai dalam ${diffDays} hari`,
+                class: 'bg-blue-100 text-blue-700 border-blue-200',
+            };
+        } else {
+            return {
+                label: 'Akan Datang',
+                class: 'bg-blue-50 text-blue-600 border-blue-100',
+            };
+        }
     }
 };
 
@@ -157,7 +176,7 @@ const getTimelineCircleClass = (start, end) => {
                                 class="flex items-center space-x-1 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-black text-blue-600 transition hover:bg-blue-100"
                             >
                                 <span>Download</span>
-                                <ExternalLink class="h-3.5 w-3.5" />
+                                <Download class="h-3.5 w-3.5" />
                             </a>
                         </div>
 
@@ -178,7 +197,7 @@ const getTimelineCircleClass = (start, end) => {
                                 class="flex items-center space-x-1 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-black text-blue-600 transition hover:bg-blue-100"
                             >
                                 <span>Download</span>
-                                <ExternalLink class="h-3.5 w-3.5" />
+                                <Download class="h-3.5 w-3.5" />
                             </a>
                         </div>
                     </div>
@@ -233,7 +252,7 @@ const getTimelineCircleClass = (start, end) => {
                                 class="rounded-full border px-2.5 py-1 text-[9px] font-black tracking-wider uppercase"
                                 :class="[
                                     member.role === 'ketua'
-                                        ? 'border-amber-200 bg-amber-50 text-amber-700'
+                                        ? 'border-blue-900 bg-blue-900 text-white'
                                         : 'border-slate-200 bg-slate-100 text-slate-600',
                                 ]"
                             >
