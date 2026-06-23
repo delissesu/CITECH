@@ -12,6 +12,24 @@ import {
 } from '@lucide/vue';
 import { ref } from 'vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const props = defineProps({
     sponsors: {
@@ -197,7 +215,7 @@ const toggleStatus = (sponsor) => {
         },
         {
             preserveScroll: true,
-        },
+        }
     );
 };
 </script>
@@ -371,50 +389,32 @@ const toggleStatus = (sponsor) => {
         </div>
 
         <!-- Add / Edit Modal -->
-        <Teleport to="body">
-            <div
-                v-if="isOpenModal"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4"
-            >
-                <div
-                    class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-                    @click="closeModal"
-                ></div>
-                <div
-                    class="animate-scale-in relative w-full max-w-lg overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl"
-                >
+        <Dialog v-model:open="isOpenModal" @update:open="(val) => !val && closeModal()">
+            <DialogContent class="rounded-3xl max-w-lg p-0 overflow-hidden border-none shadow-2xl">
                     <!-- Modal Header -->
-                    <div
-                        class="flex items-center justify-between border-b border-slate-100 px-6 py-5"
-                    >
-                        <h3 class="text-base font-extrabold text-slate-800">
+                    <DialogHeader class="flex flex-row items-center justify-between border-b border-slate-100 px-6 py-5 space-y-0">
+                        <DialogTitle class="text-base font-extrabold text-slate-800">
                             {{
                                 isEditMode
                                     ? 'Edit Mitra Sponsor'
                                     : 'Tambah Mitra Sponsor Baru'
                             }}
-                        </h3>
-                        <button
-                            @click="closeModal"
-                            class="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
-                        >
-                            <X class="h-5 w-5" />
-                        </button>
-                    </div>
+                        </DialogTitle>
+                    </DialogHeader>
 
                     <!-- Modal Body / Form -->
                     <form @submit.prevent="handleSubmit" class="space-y-4 p-6">
                         <!-- Nama Sponsor -->
                         <div class="space-y-1.5">
-                            <label
+                            <Label
                                 class="block text-[10px] font-black tracking-wider text-slate-400 uppercase"
-                                >Nama Sponsor</label
+                                >Nama Sponsor</Label
                             >
-                            <input
+                            <Input
                                 type="text"
                                 v-model="form.nama_sponsor"
                                 placeholder="Masukkan nama brand atau perusahaan"
-                                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-transparent focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
+                                class="w-full h-11 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-transparent focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
                                 required
                             />
                             <div
@@ -427,15 +427,15 @@ const toggleStatus = (sponsor) => {
 
                         <!-- Link Sponsor -->
                         <div class="space-y-1.5">
-                            <label
+                            <Label
                                 class="block text-[10px] font-black tracking-wider text-slate-400 uppercase"
-                                >Tautan Website (Opsional)</label
+                                >Tautan Website (Opsional)</Label
                             >
-                            <input
+                            <Input
                                 type="url"
                                 v-model="form.link_sponsor"
                                 placeholder="https://example.com"
-                                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-transparent focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
+                                class="w-full h-11 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-transparent focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
                             />
                             <div
                                 v-if="form.errors.link_sponsor"
@@ -449,15 +449,15 @@ const toggleStatus = (sponsor) => {
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Urutan Tampilan -->
                             <div class="space-y-1.5">
-                                <label
+                                <Label
                                     class="block text-[10px] font-black tracking-wider text-slate-400 uppercase"
-                                    >Urutan Tampilan</label
+                                    >Urutan Tampilan</Label
                                 >
-                                <input
+                                <Input
                                     type="number"
                                     v-model="form.order"
                                     min="0"
-                                    class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 focus:border-transparent focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
+                                    class="w-full h-11 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 focus:border-transparent focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
                                     required
                                 />
                                 <div
@@ -470,9 +470,9 @@ const toggleStatus = (sponsor) => {
 
                             <!-- Toggle Status Aktif -->
                             <div class="flex flex-col justify-end space-y-1.5">
-                                <label
+                                <Label
                                     class="mb-3 block text-[10px] font-black tracking-wider text-slate-400 uppercase"
-                                    >Status Aktif</label
+                                    >Status Aktif</Label
                                 >
                                 <label
                                     class="inline-flex cursor-pointer items-center select-none"
@@ -505,9 +505,9 @@ const toggleStatus = (sponsor) => {
 
                         <!-- Upload Logo Sponsor -->
                         <div class="space-y-1.5">
-                            <label
+                            <Label
                                 class="block text-[10px] font-black tracking-wider text-slate-400 uppercase"
-                                >Logo Sponsor</label
+                                >Logo Sponsor</Label
                             >
 
                             <!-- File Input Hidden -->
@@ -584,17 +584,18 @@ const toggleStatus = (sponsor) => {
                         <div
                             class="mt-6 flex justify-end gap-3 border-t border-slate-50 pt-4"
                         >
-                            <button
+                            <Button
                                 type="button"
+                                variant="outline"
                                 @click="closeModal"
-                                class="rounded-xl bg-slate-100 px-5 py-3 text-xs font-extrabold tracking-wider text-slate-600 uppercase transition hover:bg-slate-200"
+                                class="rounded-xl border border-slate-200 bg-slate-100 px-5 py-3 h-11 text-xs font-extrabold tracking-wider text-slate-600 uppercase border-none transition hover:bg-slate-200"
                                 :disabled="form.processing"
                             >
                                 Batal
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 type="submit"
-                                class="rounded-xl bg-[#1e4d8c] px-5 py-3 text-xs font-extrabold tracking-wider text-white uppercase shadow-md transition hover:scale-[1.01] hover:bg-[#153a6b] hover:shadow-blue-500/10 disabled:opacity-50"
+                                class="rounded-xl bg-[#1e4d8c] px-5 py-3 h-11 text-xs font-extrabold tracking-wider text-white uppercase shadow-md transition hover:scale-[1.01] hover:bg-[#153a6b] hover:shadow-blue-500/10 disabled:opacity-50"
                                 :disabled="form.processing"
                             >
                                 {{
@@ -604,26 +605,15 @@ const toggleStatus = (sponsor) => {
                                           ? 'Simpan Perubahan'
                                           : 'Tambah Sponsor'
                                 }}
-                            </button>
+                            </Button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </Teleport>
+            </DialogContent>
+        </Dialog>
 
         <!-- Delete Confirmation Modal -->
-        <Teleport to="body">
-            <div
-                v-if="showConfirmDelete"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4"
-            >
-                <div
-                    class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-                    @click="cancelDelete"
-                ></div>
-                <div
-                    class="animate-scale-in relative w-full max-w-sm space-y-5 rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl"
-                >
+        <AlertDialog v-model:open="showConfirmDelete" @update:open="(val) => !val && cancelDelete()">
+            <AlertDialogContent class="rounded-3xl max-w-sm">
                     <div class="flex items-start gap-4">
                         <div
                             class="rounded-2xl border border-red-100 bg-red-50 p-3 text-red-600"
@@ -631,37 +621,35 @@ const toggleStatus = (sponsor) => {
                             <AlertCircle class="h-6 w-6" />
                         </div>
                         <div class="space-y-1">
-                            <h3 class="text-base font-extrabold text-slate-800">
+                            <AlertDialogTitle class="text-base font-extrabold text-slate-800">
                                 Hapus Mitra Sponsor
-                            </h3>
-                            <p class="text-xs leading-relaxed text-slate-500">
+                            </AlertDialogTitle>
+                            <AlertDialogDescription class="text-xs leading-relaxed text-slate-500">
                                 Apakah kamu yakin ingin menghapus sponsor
                                 <strong class="text-slate-800">{{
                                     deleteSponsorName
-                                }}</strong
-                                >? Tindakan ini akan menghapus data beserta
+                                }}</strong>? Tindakan ini akan menghapus data beserta
                                 berkas logo secara permanen.
-                            </p>
+                            </AlertDialogDescription>
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-3 pt-2">
-                        <button
-                            @click="cancelDelete"
-                            class="rounded-xl bg-slate-100 px-4 py-2.5 text-xs font-extrabold tracking-wider text-slate-600 uppercase transition hover:bg-slate-200"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            @click="executeDelete"
-                            class="rounded-xl bg-red-600 px-4 py-2.5 text-xs font-extrabold tracking-wider text-white uppercase shadow-md transition hover:scale-[1.01] hover:bg-red-700 hover:shadow-red-500/10"
-                        >
-                            Hapus Permanen
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Teleport>
+                <AlertDialogFooter class="flex justify-end gap-3 pt-2">
+                    <AlertDialogCancel
+                        @click="cancelDelete"
+                        class="rounded-xl bg-slate-100 px-4 py-2.5 text-xs font-extrabold tracking-wider text-slate-600 uppercase border-none transition hover:bg-slate-200"
+                    >
+                        Batal
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        @click="executeDelete"
+                        class="rounded-xl bg-red-600 px-4 py-2.5 text-xs font-extrabold tracking-wider text-white uppercase border-none shadow-md transition hover:scale-[1.01] hover:bg-red-700 hover:shadow-red-500/10"
+                    >
+                        Hapus Permanen
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </CitechDashboardLayout>
 </template>
 

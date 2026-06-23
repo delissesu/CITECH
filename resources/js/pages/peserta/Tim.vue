@@ -16,6 +16,24 @@ import {
 } from '@lucide/vue';
 import { ref, computed } from 'vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const props = defineProps({
     userTeam: Object,
@@ -1309,668 +1327,532 @@ const clearAnggota2 = () => {
         </div>
 
         <!-- Upload Modal Dialog -->
-        <div
-            v-if="isUploadModalOpen"
-            class="fixed inset-0 z-50 overflow-y-auto"
-        >
-            <div
-                class="flex min-h-full items-center justify-center p-4 text-center"
-            >
-                <!-- Backdrop -->
-                <div
-                    class="fixed inset-0 bg-slate-900/5 backdrop-blur-md transition-opacity"
-                    @click="closeUploadModal"
-                ></div>
+        <Dialog v-model:open="isUploadModalOpen" @update:open="(val) => !val && closeUploadModal()">
+            <DialogContent class="rounded-3xl max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+                <!-- Header -->
+                <DialogHeader class="border-b border-slate-100 p-6 flex flex-row items-center justify-between space-y-0">
+                    <div class="space-y-1 text-left">
+                        <DialogTitle class="text-lg leading-tight font-black text-slate-900">
+                            Unggah Berkas Persyaratan
+                        </DialogTitle>
+                        <p
+                            class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Format Berkas wajib PDF (Maksimal 5MB)
+                        </p>
+                    </div>
+                </DialogHeader>
 
-                <!-- Modal Content Wrapper -->
-                <div
-                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-lg transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] transition-all"
+                <!-- Body / Upload Form -->
+                <form
+                    @submit.prevent="submitDocument"
+                    class="space-y-6 p-6 text-left"
                 >
-                    <!-- Header -->
+                    <!-- Info Box -->
                     <div
-                        class="flex items-center justify-between border-b border-slate-100 p-6"
+                        class="flex items-start space-x-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
                     >
+                        <Info
+                            class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+                        />
                         <div class="space-y-1">
-                            <h3
-                                class="text-lg leading-tight font-black text-slate-900"
+                            <h5 class="text-xs font-black text-slate-800">
+                                Berkas yang Harus Dikumpulkan:
+                            </h5>
+                            <ul
+                                class="list-inside list-disc space-y-0.5 text-[11px] font-bold text-slate-500"
                             >
-                                Unggah Berkas Persyaratan
-                            </h3>
+                                <li>
+                                    KTM (Kartu Tanda Mahasiswa) / Surat
+                                    Keterangan Aktif
+                                </li>
+                                <li>Screenshot Twibbon di media sosial</li>
+                                <li>
+                                    Screenshot Bukti Follow akun
+                                    penyelenggara
+                                </li>
+                            </ul>
                             <p
-                                class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                                class="mt-1.5 text-[10px] font-extrabold text-[#1e4d8c]"
                             >
-                                Format Berkas wajib PDF (Maksimal 5MB)
+                                * Ketiga berkas di atas wajib digabung
+                                menjadi 1 file PDF.
                             </p>
                         </div>
-                        <button
-                            @click="closeUploadModal"
-                            class="rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-                        >
-                            <X class="h-5 w-5" />
-                        </button>
                     </div>
 
-                    <!-- Body / Upload Form -->
-                    <form
-                        @submit.prevent="submitDocument"
-                        class="space-y-6 p-6 text-left"
-                    >
-                        <!-- Info Box -->
-                        <div
-                            class="flex items-start space-x-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
-                        >
-                            <Info
-                                class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
-                            />
-                            <div class="space-y-1">
-                                <h5 class="text-xs font-black text-slate-800">
-                                    Berkas yang Harus Dikumpulkan:
-                                </h5>
-                                <ul
-                                    class="list-inside list-disc space-y-0.5 text-[11px] font-bold text-slate-500"
-                                >
-                                    <li>
-                                        KTM (Kartu Tanda Mahasiswa) / Surat
-                                        Keterangan Aktif
-                                    </li>
-                                    <li>Screenshot Twibbon di media sosial</li>
-                                    <li>
-                                        Screenshot Bukti Follow akun
-                                        penyelenggara
-                                    </li>
-                                </ul>
-                                <p
-                                    class="mt-1.5 text-[10px] font-extrabold text-[#1e4d8c]"
-                                >
-                                    * Ketiga berkas di atas wajib digabung
-                                    menjadi 1 file PDF.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Drop / Select Area -->
-                        <div
-                            @click="triggerFileInput"
-                            class="flex cursor-pointer flex-col items-center justify-center space-y-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 transition hover:border-[#3769a6] hover:bg-blue-50/10"
-                        >
-                            <input
-                                type="file"
-                                ref="fileInput"
-                                @change="handleFileChange"
-                                accept=".pdf"
-                                class="hidden"
-                            />
-
-                            <div
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-[#3769a6]"
-                            >
-                                <UploadCloud class="h-6 w-6" />
-                            </div>
-
-                            <div class="space-y-1 text-center">
-                                <p
-                                    class="text-xs font-extrabold text-slate-800"
-                                >
-                                    {{
-                                        selectedFileName
-                                            ? 'Ganti File PDF terpilih'
-                                            : 'Pilih Berkas PDF'
-                                    }}
-                                </p>
-                                <p class="text-[10px] font-bold text-slate-400">
-                                    Klik di sini untuk menjelajahi file
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Display selected file -->
-                        <div
-                            v-if="selectedFileName"
-                            class="flex items-center justify-between rounded-xl border border-blue-100/50 bg-blue-50/30 p-3.5"
-                        >
-                            <div class="flex min-w-0 items-center space-x-3">
-                                <FileText
-                                    class="h-5 w-5 flex-shrink-0 text-[#3769a6]"
-                                />
-                                <span
-                                    class="truncate text-xs font-bold text-slate-700"
-                                    >{{ selectedFileName }}</span
-                                >
-                            </div>
-                            <span
-                                class="rounded border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-600"
-                                >Terpilih</span
-                            >
-                        </div>
-
-                        <!-- Errors -->
-                        <div
-                            v-if="uploadForm.errors.file_dokumen"
-                            class="flex items-center space-x-2 rounded-xl border border-red-100 bg-red-50 p-3 text-red-600"
-                        >
-                            <AlertCircle class="h-4 w-4 flex-shrink-0" />
-                            <span class="text-xs font-bold">{{
-                                uploadForm.errors.file_dokumen
-                            }}</span>
-                        </div>
-
-                        <!-- Actions -->
-                        <div
-                            class="flex items-center justify-end space-x-3 pt-2"
-                        >
-                            <button
-                                type="button"
-                                @click="closeUploadModal"
-                                class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-                            >
-                                Batal
-                            </button>
-                            <button
-                                type="submit"
-                                :disabled="
-                                    uploadForm.processing ||
-                                    !uploadForm.file_dokumen
-                                "
-                                class="flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                <UploadCloud class="h-3.5 w-3.5" />
-                                <span>{{
-                                    uploadForm.processing
-                                        ? 'Mengunggah...'
-                                        : 'Kirim Persyaratan'
-                                }}</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Confirm Cancel Modal -->
-        <div
-            v-if="isConfirmCancelModalOpen"
-            class="fixed inset-0 z-50 overflow-y-auto"
-        >
-            <div
-                class="flex min-h-full items-center justify-center p-4 text-center"
-            >
-                <!-- Backdrop -->
-                <div
-                    class="fixed inset-0 bg-slate-900/5 backdrop-blur-md transition-opacity"
-                    @click="closeConfirmCancelModal"
-                ></div>
-
-                <!-- Modal Content Wrapper -->
-                <div
-                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-md transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] transition-all"
-                >
-                    <div class="space-y-6 p-6">
-                        <!-- Icon & Title -->
-                        <div class="flex items-start space-x-4">
-                            <div
-                                class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"
-                            >
-                                <AlertCircle class="h-5 w-5" />
-                            </div>
-                            <div class="min-w-0 space-y-1">
-                                <h3 class="text-base font-black text-slate-900">
-                                    Batalkan Unggahan Berkas?
-                                </h3>
-                                <p
-                                    class="text-xs leading-relaxed font-bold text-slate-500"
-                                >
-                                    Apakah Anda yakin ingin membatalkan
-                                    pengiriman dokumen persyaratan ini? Tindakan
-                                    ini akan menghapus berkas PDF yang telah
-                                    diunggah secara permanen.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex items-center justify-end space-x-3">
-                            <button
-                                type="button"
-                                @click="closeConfirmCancelModal"
-                                class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-                            >
-                                Tidak, Kembali
-                            </button>
-                            <button
-                                type="button"
-                                @click="confirmCancelDocument"
-                                class="flex items-center space-x-1.5 rounded-xl bg-red-600 px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-red-700"
-                            >
-                                <Trash2 class="h-3.5 w-3.5" />
-                                <span>Ya, Batalkan</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Payment Upload Modal Dialog -->
-        <div
-            v-if="isPaymentUploadModalOpen"
-            class="fixed inset-0 z-50 overflow-y-auto"
-        >
-            <div
-                class="flex min-h-full items-center justify-center p-4 text-center"
-            >
-                <!-- Backdrop -->
-                <div
-                    class="fixed inset-0 bg-slate-900/5 backdrop-blur-md transition-opacity"
-                    @click="closePaymentUploadModal"
-                ></div>
-
-                <!-- Modal Content Wrapper -->
-                <div
-                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-lg transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] transition-all"
-                >
-                    <!-- Header -->
+                    <!-- Drop / Select Area -->
                     <div
-                        class="flex items-center justify-between border-b border-slate-100 p-6"
+                        @click="triggerFileInput"
+                        class="flex cursor-pointer flex-col items-center justify-center space-y-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 transition hover:border-[#3769a6] hover:bg-blue-50/10"
                     >
-                        <div class="space-y-1">
-                            <h3
-                                class="text-lg leading-tight font-black text-slate-900"
-                            >
-                                Unggah Bukti Pembayaran
-                            </h3>
+                        <input
+                            type="file"
+                            ref="fileInput"
+                            @change="handleFileChange"
+                            accept=".pdf"
+                            class="hidden"
+                        />
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-[#3769a6]"
+                        >
+                            <UploadCloud class="h-6 w-6" />
+                        </div>
+
+                        <div class="space-y-1 text-center">
                             <p
-                                class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
-                            >
-                                Format Berkas: JPG, PNG, atau PDF (Maksimal 5MB)
-                            </p>
-                        </div>
-                        <button
-                            @click="closePaymentUploadModal"
-                            class="rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-                        >
-                            <X class="h-5 w-5" />
-                        </button>
-                    </div>
-
-                    <!-- Body / Upload Form -->
-                    <form
-                        @submit.prevent="submitPayment"
-                        class="space-y-6 p-6 text-left"
-                    >
-                        <!-- Drop / Select Area -->
-                        <div
-                            @click="triggerPaymentFileInput"
-                            class="flex cursor-pointer flex-col items-center justify-center space-y-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 transition hover:border-[#3769a6] hover:bg-blue-50/10"
-                        >
-                            <input
-                                type="file"
-                                ref="paymentFileInput"
-                                @change="handlePaymentFileChange"
-                                accept="image/*,.pdf"
-                                class="hidden"
-                            />
-
-                            <div
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-[#3769a6]"
-                            >
-                                <UploadCloud class="h-6 w-6" />
-                            </div>
-
-                            <div class="space-y-1 text-center">
-                                <p
-                                    class="text-xs font-extrabold text-slate-800"
-                                >
-                                    {{
-                                        selectedPaymentFileName
-                                            ? 'Ganti Bukti Pembayaran terpilih'
-                                            : 'Pilih Bukti Pembayaran'
-                                    }}
-                                </p>
-                                <p class="text-[10px] font-bold text-slate-400">
-                                    Klik di sini untuk menjelajahi file
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Display selected file -->
-                        <div
-                            v-if="selectedPaymentFileName"
-                            class="flex items-center justify-between rounded-xl border border-blue-100/50 bg-blue-50/30 p-3.5"
-                        >
-                            <div class="flex min-w-0 items-center space-x-3">
-                                <FileText
-                                    class="h-5 w-5 flex-shrink-0 text-[#3769a6]"
-                                />
-                                <span
-                                    class="truncate text-xs font-bold text-slate-700"
-                                    >{{ selectedPaymentFileName }}</span
-                                >
-                            </div>
-                            <span
-                                class="rounded border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-600"
-                                >Terpilih</span
-                            >
-                        </div>
-
-                        <!-- Errors -->
-                        <div
-                            v-if="paymentForm.errors.bukti_pembayaran"
-                            class="flex items-center space-x-2 rounded-xl border border-red-100 bg-red-50 p-3 text-red-600"
-                        >
-                            <AlertCircle class="h-4 w-4 flex-shrink-0" />
-                            <span class="text-xs font-bold">{{
-                                paymentForm.errors.bukti_pembayaran
-                            }}</span>
-                        </div>
-
-                        <!-- Actions -->
-                        <div
-                            class="flex items-center justify-end space-x-3 pt-2"
-                        >
-                            <button
-                                type="button"
-                                @click="closePaymentUploadModal"
-                                class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-                            >
-                                Batal
-                            </button>
-                            <button
-                                type="submit"
-                                :disabled="
-                                    paymentForm.processing ||
-                                    !paymentForm.bukti_pembayaran
-                                "
-                                class="flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                <UploadCloud class="h-3.5 w-3.5" />
-                                <span>{{
-                                    paymentForm.processing
-                                        ? 'Mengunggah...'
-                                        : 'Kirim Bukti'
-                                }}</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Confirm Cancel Payment Modal -->
-        <div
-            v-if="isConfirmCancelPaymentModalOpen"
-            class="fixed inset-0 z-50 overflow-y-auto"
-        >
-            <div
-                class="flex min-h-full items-center justify-center p-4 text-center"
-            >
-                <!-- Backdrop -->
-                <div
-                    class="fixed inset-0 bg-slate-900/5 backdrop-blur-md transition-opacity"
-                    @click="closeConfirmCancelPaymentModal"
-                ></div>
-
-                <!-- Modal Content Wrapper -->
-                <div
-                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-md transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] transition-all"
-                >
-                    <div class="space-y-6 p-6">
-                        <!-- Icon & Title -->
-                        <div class="flex items-start space-x-4">
-                            <div
-                                class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"
-                            >
-                                <AlertCircle class="h-5 w-5" />
-                            </div>
-                            <div class="min-w-0 space-y-1">
-                                <h3 class="text-base font-black text-slate-900">
-                                    Batalkan Unggahan Pembayaran?
-                                </h3>
-                                <p
-                                    class="text-xs leading-relaxed font-bold text-slate-500"
-                                >
-                                    Apakah Anda yakin ingin membatalkan
-                                    pengiriman bukti pembayaran ini? Tindakan
-                                    ini akan menghapus bukti transaksi yang
-                                    telah diunggah secara permanen.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex items-center justify-end space-x-3">
-                            <button
-                                type="button"
-                                @click="closeConfirmCancelPaymentModal"
-                                class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-                            >
-                                Tidak, Kembali
-                            </button>
-                            <button
-                                type="button"
-                                @click="confirmCancelPayment"
-                                class="flex items-center space-x-1.5 rounded-xl bg-red-600 px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-red-700"
-                            >
-                                <Trash2 class="h-3.5 w-3.5" />
-                                <span>Ya, Batalkan</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Proposal Submission Link drive Modal Dialog -->
-        <div
-            v-if="isSubmissionModalOpen"
-            class="fixed inset-0 z-50 overflow-y-auto"
-        >
-            <div
-                class="flex min-h-full items-center justify-center p-4 text-center"
-            >
-                <!-- Backdrop -->
-                <div
-                    class="fixed inset-0 bg-slate-900/5 backdrop-blur-md transition-opacity"
-                    @click="closeSubmissionModal"
-                ></div>
-
-                <!-- Modal Content Wrapper -->
-                <div
-                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-lg transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] transition-all"
-                >
-                    <!-- Header -->
-                    <div
-                        class="flex items-center justify-between border-b border-slate-100 p-6"
-                    >
-                        <div class="space-y-1">
-                            <h3
-                                class="text-lg leading-tight font-black text-slate-900"
-                            >
-                                Kumpulkan Link Proposal
-                            </h3>
-                            <p
-                                class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
-                            >
-                                Kumpulkan Proposal & Surat Orisinalitas (Google
-                                Drive Link)
-                            </p>
-                        </div>
-                        <button
-                            @click="closeSubmissionModal"
-                            class="rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-                        >
-                            <X class="h-5 w-5" />
-                        </button>
-                    </div>
-
-                    <!-- Body / Form -->
-                    <form
-                        @submit.prevent="triggerConfirmSubmission"
-                        class="space-y-5 p-6 text-left"
-                    >
-                        <!-- Info Box -->
-                        <div
-                            class="flex items-start space-x-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
-                        >
-                            <Info
-                                class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
-                            />
-                            <div class="space-y-1">
-                                <h5 class="text-xs font-black text-slate-800">
-                                    Petunjuk Pengumpulan Link:
-                                </h5>
-                                <ul
-                                    class="list-inside list-disc space-y-0.5 text-[11px] font-bold text-slate-500"
-                                >
-                                    <li>
-                                        Masukkan Proposal dan Surat Orisinalitas
-                                        dalam satu folder Google Drive
-                                    </li>
-                                    <li>
-                                        Atur hak akses sharing folder ke:
-                                        <strong
-                                            >"Siapa saja yang memiliki link
-                                            dapat melihat"</strong
-                                        >
-                                        (Public)
-                                    </li>
-                                    <li>
-                                        Tempel (Paste) alamat URL folder Google
-                                        Drive tersebut pada kolom input di bawah
-                                        ini
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Link Input -->
-                        <div class="space-y-2">
-                            <label
-                                class="block text-[10px] font-black tracking-wider text-slate-400 uppercase"
-                                >URL Google Drive Folder</label
-                            >
-                            <input
-                                type="text"
-                                v-model="submissionForm.link_file_submission"
-                                placeholder="Contoh: https://drive.google.com/drive/folders/..."
-                                class="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                            />
-                            <div
-                                v-if="
-                                    submissionForm.errors.link_file_submission
-                                "
-                                class="mt-1 flex items-center space-x-1.5 text-red-500"
-                            >
-                                <AlertCircle
-                                    class="h-3.5 w-3.5 flex-shrink-0"
-                                />
-                                <span class="text-[10px] font-bold">{{
-                                    submissionForm.errors.link_file_submission
-                                }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div
-                            class="flex items-center justify-end space-x-3 pt-2"
-                        >
-                            <button
-                                type="button"
-                                @click="closeSubmissionModal"
-                                class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-                            >
-                                Batal
-                            </button>
-                            <button
-                                type="submit"
-                                class="flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d]"
-                            >
-                                <UploadCloud class="h-3.5 w-3.5" />
-                                <span>Kumpulkan Link</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Double Confirm Submit Proposal Modal -->
-        <div
-            v-if="isConfirmSubmissionModalOpen"
-            class="fixed inset-0 z-50 overflow-y-auto"
-        >
-            <div
-                class="flex min-h-full items-center justify-center p-4 text-center"
-            >
-                <!-- Backdrop -->
-                <div
-                    class="fixed inset-0 bg-slate-900/5 backdrop-blur-md transition-opacity"
-                    @click="closeConfirmSubmissionModal"
-                ></div>
-
-                <!-- Modal Content Wrapper -->
-                <div
-                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-md transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] transition-all"
-                >
-                    <div class="space-y-6 p-6">
-                        <!-- Icon & Title -->
-                        <div class="flex items-start space-x-4">
-                            <div
-                                class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600"
-                            >
-                                <AlertCircle class="h-5 w-5" />
-                            </div>
-                            <div class="min-w-0 space-y-1">
-                                <h3 class="text-base font-black text-slate-900">
-                                    Apakah Anda Yakin Mengumpulkan?
-                                </h3>
-                                <p
-                                    class="text-xs leading-relaxed font-bold text-slate-500"
-                                >
-                                    Pengumpulan proposal dan surat orisinalitas
-                                    hanya dapat dilakukan
-                                    <strong
-                                        class="font-extrabold text-slate-800"
-                                        >1 kali</strong
-                                    >
-                                    dan
-                                    <strong
-                                        class="font-extrabold text-slate-800"
-                                        >tidak dapat diubah atau
-                                        dibatalkan</strong
-                                    >
-                                    setelah dikirim. Pastikan link Google Drive
-                                    Anda sudah benar dan dapat diakses secara
-                                    publik.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex items-center justify-end space-x-3">
-                            <button
-                                type="button"
-                                @click="closeConfirmSubmissionModal"
-                                class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-                            >
-                                Periksa Kembali
-                            </button>
-                            <button
-                                type="button"
-                                @click="submitProposal"
-                                :disabled="submissionForm.processing"
-                                class="rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d]"
+                                class="text-xs font-extrabold text-slate-800"
                             >
                                 {{
-                                    submissionForm.processing
-                                        ? 'Mengirim...'
-                                        : 'Ya, Kumpulkan'
+                                    selectedFileName
+                                        ? 'Ganti File PDF terpilih'
+                                        : 'Pilih Berkas PDF'
                                 }}
-                            </button>
+                            </p>
+                            <p class="text-[10px] font-bold text-slate-400">
+                                Klik di sini untuk menjelajahi file
+                            </p>
                         </div>
                     </div>
+
+                    <!-- Display selected file -->
+                    <div
+                        v-if="selectedFileName"
+                        class="flex items-center justify-between rounded-xl border border-blue-100/50 bg-blue-50/30 p-3.5"
+                    >
+                        <div class="flex min-w-0 items-center space-x-3">
+                            <FileText
+                                class="h-5 w-5 flex-shrink-0 text-[#3769a6]"
+                            />
+                            <span
+                                class="truncate text-xs font-bold text-slate-700"
+                                >{{ selectedFileName }}</span
+                            >
+                        </div>
+                        <span
+                            class="rounded border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-600"
+                            >Terpilih</span
+                        >
+                    </div>
+
+                    <!-- Errors -->
+                    <div
+                        v-if="uploadForm.errors.file_dokumen"
+                        class="flex items-center space-x-2 rounded-xl border border-red-100 bg-red-50 p-3 text-red-600"
+                    >
+                        <AlertCircle class="h-4 w-4 flex-shrink-0" />
+                        <span class="text-xs font-bold">{{
+                            uploadForm.errors.file_dokumen
+                        }}</span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div
+                        class="flex items-center justify-end space-x-3 pt-2"
+                    >
+                        <Button
+                            type="button"
+                            variant="outline"
+                            @click="closeUploadModal"
+                            class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="submit"
+                            :disabled="
+                                uploadForm.processing ||
+                                !uploadForm.file_dokumen
+                            "
+                            class="flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <UploadCloud class="h-3.5 w-3.5" />
+                            <span>{{
+                                uploadForm.processing
+                                    ? 'Mengunggah...'
+                                    : 'Kirim Persyaratan'
+                            }}</span>
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+
+        <!-- Confirm Cancel Modal -->
+        <AlertDialog v-model:open="isConfirmCancelModalOpen" @update:open="(val) => !val && closeConfirmCancelModal()">
+            <AlertDialogContent class="rounded-3xl max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]">
+                <div class="flex items-start space-x-4">
+                    <div
+                        class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"
+                    >
+                        <AlertCircle class="h-5 w-5" />
+                    </div>
+                    <div class="min-w-0 space-y-1">
+                        <AlertDialogTitle class="text-base font-black text-slate-900">
+                            Batalkan Unggahan Berkas?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription class="text-xs leading-relaxed font-bold text-slate-500">
+                            Apakah Anda yakin ingin membatalkan
+                            pengiriman dokumen persyaratan ini? Tindakan
+                            ini akan menghapus berkas PDF yang telah
+                            diunggah secara permanen.
+                        </AlertDialogDescription>
+                    </div>
                 </div>
-            </div>
-        </div>
+
+                <AlertDialogFooter class="flex items-center justify-end space-x-3 mt-4">
+                    <AlertDialogCancel
+                        @click="closeConfirmCancelModal"
+                        as-child
+                    >
+                        <Button variant="outline" class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50">
+                            Tidak, Kembali
+                        </Button>
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        @click="confirmCancelDocument"
+                        as-child
+                    >
+                        <Button class="flex items-center space-x-1.5 rounded-xl bg-red-600 px-6 py-2.5 text-xs font-black text-white hover:bg-red-700">
+                            <Trash2 class="h-3.5 w-3.5" />
+                            <span>Ya, Batalkan</span>
+                        </Button>
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
+        <!-- Payment Upload Modal Dialog -->
+        <Dialog v-model:open="isPaymentUploadModalOpen" @update:open="(val) => !val && closePaymentUploadModal()">
+            <DialogContent class="rounded-3xl max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+                <!-- Header -->
+                <DialogHeader class="border-b border-slate-100 p-6 flex flex-row items-center justify-between space-y-0">
+                    <div class="space-y-1 text-left">
+                        <DialogTitle class="text-lg leading-tight font-black text-slate-900">
+                            Unggah Bukti Pembayaran
+                        </DialogTitle>
+                        <p
+                            class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Format Berkas: JPG, PNG, atau PDF (Maksimal 5MB)
+                        </p>
+                    </div>
+                </DialogHeader>
+
+                <!-- Body / Upload Form -->
+                <form
+                    @submit.prevent="submitPayment"
+                    class="space-y-6 p-6 text-left"
+                >
+                    <!-- Drop / Select Area -->
+                    <div
+                        @click="triggerPaymentFileInput"
+                        class="flex cursor-pointer flex-col items-center justify-center space-y-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 transition hover:border-[#3769a6] hover:bg-blue-50/10"
+                    >
+                        <input
+                            type="file"
+                            ref="paymentFileInput"
+                            @change="handlePaymentFileChange"
+                            accept="image/*,.pdf"
+                            class="hidden"
+                        />
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-[#3769a6]"
+                        >
+                            <UploadCloud class="h-6 w-6" />
+                        </div>
+
+                        <div class="space-y-1 text-center">
+                            <p
+                                class="text-xs font-extrabold text-slate-800"
+                            >
+                                {{
+                                    selectedPaymentFileName
+                                        ? 'Ganti Bukti Pembayaran terpilih'
+                                        : 'Pilih Bukti Pembayaran'
+                                }}
+                            </p>
+                            <p class="text-[10px] font-bold text-slate-400">
+                                Klik di sini untuk menjelajahi file
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Display selected file -->
+                    <div
+                        v-if="selectedPaymentFileName"
+                        class="flex items-center justify-between rounded-xl border border-blue-100/50 bg-blue-50/30 p-3.5"
+                    >
+                        <div class="flex min-w-0 items-center space-x-3">
+                            <FileText
+                                class="h-5 w-5 flex-shrink-0 text-[#3769a6]"
+                            />
+                            <span
+                                class="truncate text-xs font-bold text-slate-700"
+                                >{{ selectedPaymentFileName }}</span
+                            >
+                        </div>
+                        <span
+                            class="rounded border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-600"
+                            >Terpilih</span
+                        >
+                    </div>
+
+                    <!-- Errors -->
+                    <div
+                        v-if="paymentForm.errors.bukti_pembayaran"
+                        class="flex items-center space-x-2 rounded-xl border border-red-100 bg-red-50 p-3 text-red-600"
+                    >
+                        <AlertCircle class="h-4 w-4 flex-shrink-0" />
+                        <span class="text-xs font-bold">{{
+                            paymentForm.errors.bukti_pembayaran
+                        }}</span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div
+                        class="flex items-center justify-end space-x-3 pt-2"
+                    >
+                        <Button
+                            type="button"
+                            variant="outline"
+                            @click="closePaymentUploadModal"
+                            class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="submit"
+                            :disabled="
+                                paymentForm.processing ||
+                                !paymentForm.bukti_pembayaran
+                            "
+                            class="flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <UploadCloud class="h-3.5 w-3.5" />
+                            <span>{{
+                                paymentForm.processing
+                                    ? 'Mengunggah...'
+                                    : 'Kirim Bukti'
+                            }}</span>
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+
+        <!-- Confirm Cancel Payment Modal -->
+        <AlertDialog v-model:open="isConfirmCancelPaymentModalOpen" @update:open="(val) => !val && closeConfirmCancelPaymentModal()">
+            <AlertDialogContent class="rounded-3xl max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]">
+                <div class="flex items-start space-x-4">
+                    <div
+                        class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"
+                    >
+                        <AlertCircle class="h-5 w-5" />
+                    </div>
+                    <div class="min-w-0 space-y-1">
+                        <AlertDialogTitle class="text-base font-black text-slate-900">
+                            Batalkan Unggahan Pembayaran?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription class="text-xs leading-relaxed font-bold text-slate-500">
+                            Apakah Anda yakin ingin membatalkan
+                            pengiriman bukti pembayaran ini? Tindakan
+                            ini akan menghapus bukti transaksi yang
+                            telah diunggah secara permanen.
+                        </AlertDialogDescription>
+                    </div>
+                </div>
+
+                <AlertDialogFooter class="flex items-center justify-end space-x-3 mt-4">
+                    <AlertDialogCancel
+                        @click="closeConfirmCancelPaymentModal"
+                        as-child
+                    >
+                        <Button variant="outline" class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50">
+                            Tidak, Kembali
+                        </Button>
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        @click="confirmCancelPayment"
+                        as-child
+                    >
+                        <Button class="flex items-center space-x-1.5 rounded-xl bg-red-600 px-6 py-2.5 text-xs font-black text-white hover:bg-red-700">
+                            <Trash2 class="h-3.5 w-3.5" />
+                            <span>Ya, Batalkan</span>
+                        </Button>
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
+        <!-- Proposal Submission Link drive Modal Dialog -->
+        <Dialog v-model:open="isSubmissionModalOpen" @update:open="(val) => !val && closeSubmissionModal()">
+            <DialogContent class="rounded-3xl max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+                <!-- Header -->
+                <DialogHeader class="border-b border-slate-100 p-6 flex flex-row items-center justify-between space-y-0">
+                    <div class="space-y-1 text-left">
+                        <DialogTitle class="text-lg leading-tight font-black text-slate-900">
+                            Kumpulkan Link Proposal
+                        </DialogTitle>
+                        <p
+                            class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Kumpulkan Proposal & Surat Orisinalitas (Google Drive Link)
+                        </p>
+                    </div>
+                </DialogHeader>
+
+                <!-- Body / Form -->
+                <form
+                    @submit.prevent="triggerConfirmSubmission"
+                    class="space-y-5 p-6 text-left"
+                >
+                    <!-- Info Box -->
+                    <div
+                        class="flex items-start space-x-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
+                    >
+                        <Info
+                            class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+                        />
+                        <div class="space-y-1">
+                            <h5 class="text-xs font-black text-slate-800">
+                                Petunjuk Pengumpulan Link:
+                            </h5>
+                            <ul
+                                class="list-inside list-disc space-y-0.5 text-[11px] font-bold text-slate-500"
+                            >
+                                <li>
+                                    Masukkan Proposal dan Surat Orisinalitas
+                                    dalam satu folder Google Drive
+                                </li>
+                                <li>
+                                    Atur hak akses sharing folder ke:
+                                    <strong
+                                        >"Siapa saja yang memiliki link
+                                        dapat melihat"</strong
+                                    >
+                                    (Public)
+                                </li>
+                                <li>
+                                    Tempel (Paste) alamat URL folder Google
+                                    Drive tersebut pada kolom input di bawah
+                                    ini
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Link Input -->
+                    <div class="space-y-2">
+                        <Label
+                            class="block text-[10px] font-black tracking-wider text-slate-400 uppercase"
+                            >URL Google Drive Folder</Label
+                        >
+                        <Input
+                            type="text"
+                            v-model="submissionForm.link_file_submission"
+                            placeholder="Contoh: https://drive.google.com/drive/folders/..."
+                            class="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none animate-none"
+                        />
+                        <div
+                            v-if="
+                                submissionForm.errors.link_file_submission
+                            "
+                            class="mt-1 flex items-center space-x-1.5 text-red-500"
+                        >
+                            <AlertCircle
+                                class="h-3.5 w-3.5 flex-shrink-0"
+                            />
+                            <span class="text-[10px] font-bold">{{
+                                submissionForm.errors.link_file_submission
+                            }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div
+                        class="flex items-center justify-end space-x-3 pt-2"
+                    >
+                        <Button
+                            type="button"
+                            variant="outline"
+                            @click="closeSubmissionModal"
+                            class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="submit"
+                            class="flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d]"
+                        >
+                            <UploadCloud class="h-3.5 w-3.5" />
+                            <span>Kumpulkan Link</span>
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+
+        <!-- Double Confirm Submit Proposal Modal -->
+        <AlertDialog v-model:open="isConfirmSubmissionModalOpen" @update:open="(val) => !val && closeConfirmSubmissionModal()">
+            <AlertDialogContent class="rounded-3xl max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]">
+                <div class="flex items-start space-x-4">
+                    <div
+                        class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600"
+                    >
+                        <AlertCircle class="h-5 w-5" />
+                    </div>
+                    <div class="min-w-0 space-y-1">
+                        <AlertDialogTitle class="text-base font-black text-slate-900">
+                            Apakah Anda Yakin Mengumpulkan?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription class="text-xs leading-relaxed font-bold text-slate-500">
+                            Pengumpulan proposal dan surat orisinalitas
+                            hanya dapat dilakukan
+                            <strong
+                                class="font-extrabold text-slate-800"
+                                >1 kali</strong
+                            >
+                            dan
+                            <strong
+                                class="font-extrabold text-slate-800"
+                                >tidak dapat diubah atau
+                                dibatalkan</strong
+                            >
+                            setelah dikirim. Pastikan link Google Drive
+                            Anda sudah benar dan dapat diakses secara
+                            publik.
+                        </AlertDialogDescription>
+                    </div>
+                </div>
+
+                <AlertDialogFooter class="flex items-center justify-end space-x-3 mt-4">
+                    <AlertDialogCancel
+                        @click="closeConfirmSubmissionModal"
+                        as-child
+                    >
+                        <Button variant="outline" class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50">
+                            Periksa Kembali
+                        </Button>
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        @click="submitProposal"
+                        :disabled="submissionForm.processing"
+                        as-child
+                    >
+                        <Button class="rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white hover:bg-[#15233d]">
+                            {{
+                                submissionForm.processing
+                                    ? 'Mengirim...'
+                                    : 'Ya, Kumpulkan'
+                            }}
+                        </Button>
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </CitechDashboardLayout>
 </template>
 

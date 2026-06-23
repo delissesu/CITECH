@@ -3,6 +3,18 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { Calendar, Save } from '@lucide/vue';
 import { ref } from 'vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const props = defineProps({
     timelines: Array,
@@ -100,18 +112,18 @@ const cancelSave = () => {
                     </div>
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div class="space-y-1.5">
-                            <label
+                            <Label
                                 class="block text-[10px] font-black tracking-wider text-slate-400 uppercase"
-                                >Tanggal Mulai</label
+                                >Tanggal Mulai</Label
                             >
-                            <input
+                            <Input
                                 type="datetime-local"
                                 :value="form[`tanggal_mulai_${tahap}`]"
                                 @input="
                                     form[`tanggal_mulai_${tahap}`] =
                                         $event.target.value
                                 "
-                                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
+                                class="w-full h-11 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
                             />
                             <div
                                 v-if="form.errors[`tanggal_mulai_${tahap}`]"
@@ -121,18 +133,18 @@ const cancelSave = () => {
                             </div>
                         </div>
                         <div class="space-y-1.5">
-                            <label
+                            <Label
                                 class="block text-[10px] font-black tracking-wider text-slate-400 uppercase"
-                                >Tanggal Selesai</label
+                                >Tanggal Selesai</Label
                             >
-                            <input
+                            <Input
                                 type="datetime-local"
                                 :value="form[`tanggal_selesai_${tahap}`]"
                                 @input="
                                     form[`tanggal_selesai_${tahap}`] =
                                         $event.target.value
                                 "
-                                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
+                                class="w-full h-11 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-[#1e4d8c] focus:outline-none"
                             />
                             <div
                                 v-if="form.errors[`tanggal_selesai_${tahap}`]"
@@ -158,41 +170,32 @@ const cancelSave = () => {
         </div>
 
         <!-- Confirmation Dialog -->
-        <Teleport to="body">
-            <div
-                v-if="showConfirm"
-                class="fixed inset-0 z-50 flex items-center justify-center"
-            >
-                <div
-                    class="absolute inset-0 bg-black/40"
-                    @click="cancelSave"
-                ></div>
-                <div
-                    class="relative mx-4 w-full max-w-sm space-y-4 rounded-2xl bg-white p-6 shadow-2xl"
-                >
-                    <h3 class="text-lg font-black text-slate-800">
+        <AlertDialog v-model:open="showConfirm">
+            <AlertDialogContent class="rounded-2xl max-w-sm">
+                <AlertDialogHeader>
+                    <AlertDialogTitle class="text-lg font-black text-slate-800">
                         Konfirmasi Perubahan
-                    </h3>
-                    <p class="text-sm leading-relaxed text-slate-500">
+                    </AlertDialogTitle>
+                    <AlertDialogDescription class="text-sm leading-relaxed text-slate-500">
                         Apakah kamu yakin untuk mengubah tanggal submission?
-                    </p>
-                    <div class="flex justify-end gap-3">
-                        <button
-                            @click="cancelSave"
-                            class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-200"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            @click="confirmSave"
-                            class="rounded-xl bg-[#1e4d8c] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#153a6b]"
-                        >
-                            Ya, Simpan
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Teleport>
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter class="flex justify-end gap-3 pt-2">
+                    <AlertDialogCancel
+                        @click="cancelSave"
+                        class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600 border-none transition hover:bg-slate-200"
+                    >
+                        Batal
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        @click="confirmSave"
+                        class="rounded-xl bg-[#1e4d8c] px-4 py-2 text-sm font-bold text-white border-none transition hover:bg-[#153a6b]"
+                    >
+                        Ya, Simpan
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </CitechDashboardLayout>
 </template>
 

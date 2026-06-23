@@ -11,6 +11,12 @@ import {
     Globe,
 } from '@lucide/vue';
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion';
 
 const props = defineProps({
     canLogin: Boolean,
@@ -142,10 +148,6 @@ return [];
 });
 
 // FAQ Accordion
-const activeFaq = ref(null);
-const toggleFaq = (index) => {
-    activeFaq.value = activeFaq.value === index ? null : index;
-};
 
 const faqs = [
     {
@@ -1227,18 +1229,16 @@ return '';
                 </div>
 
                 <!-- FAQ Accordion List with hover and smooth layout changes -->
-                <div class="space-y-4">
-                    <div
+                <Accordion type="single" class="space-y-4 w-full" collapsible>
+                    <AccordionItem
                         v-for="(faq, index) in faqs"
                         :key="index"
+                        :value="`faq-${index}`"
                         class="transform overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-[1500ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         :class="[
                             revealedSections.faq
                                 ? 'translate-y-0 opacity-100'
                                 : 'translate-y-16 opacity-0',
-                            activeFaq === index
-                                ? 'border-blue-300/80 bg-[#f4f7fe]/10 shadow-[0_5px_15px_-10px_rgba(0,0,0,0.05)]'
-                                : '',
                         ]"
                         :style="{
                             transitionDelay: revealedSections.faq
@@ -1246,30 +1246,26 @@ return '';
                                 : '0ms',
                         }"
                     >
-                        <button
-                            @click="toggleFaq(index)"
-                            class="flex w-full items-center justify-between px-6 py-5 text-left transition duration-300 hover:bg-slate-50/50 focus:outline-none"
+                        <AccordionTrigger
+                            class="flex w-full items-center justify-between px-6 py-5 text-left transition duration-300 hover:bg-slate-50/50 hover:no-underline [&[data-state=open]>svg]:text-blue-500 focus:outline-none"
                         >
                             <span
                                 class="text-sm font-extrabold text-slate-800 md:text-base"
                                 >{{ faq.q }}</span
                             >
-                            <ChevronDown
-                                class="h-5 w-5 text-slate-400 transition-transform duration-300"
-                                :class="{
-                                    'rotate-180 text-blue-500':
-                                        activeFaq === index,
-                                }"
-                            />
-                        </button>
-                        <div
-                            v-show="activeFaq === index"
+                            <template #icon>
+                                <ChevronDown
+                                    class="h-5 w-5 text-slate-400 transition-transform duration-300"
+                                />
+                            </template>
+                        </AccordionTrigger>
+                        <AccordionContent
                             class="border-t border-slate-100/80 px-6 pt-3 pb-5 text-xs leading-relaxed text-slate-500 md:text-sm"
                         >
                             {{ faq.a }}
-                        </div>
-                    </div>
-                </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
             </div>
         </section>
 

@@ -12,6 +12,22 @@ import {
 } from '@lucide/vue';
 import { ref, computed } from 'vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 const props = defineProps({
     teams: Array,
@@ -155,39 +171,39 @@ const closeTeamDetails = () => {
                 class="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_10px_35px_rgba(0,0,0,0.03)]"
             >
                 <div class="overflow-x-auto">
-                    <table class="w-full border-collapse text-left">
-                        <thead>
-                            <tr
-                                class="border-b border-slate-100 bg-slate-50/70 text-[10px] font-black tracking-widest text-slate-400 uppercase"
+                    <Table class="w-full border-collapse text-left">
+                        <TableHeader>
+                            <TableRow
+                                class="border-b border-slate-100 bg-slate-50/70 text-[10px] font-black tracking-widest text-slate-400 uppercase hover:bg-slate-50/70"
                             >
-                                <th class="px-6 py-4">Nama Tim / Instansi</th>
-                                <th class="px-6 py-4">Ketua Tim</th>
-                                <th class="px-6 py-4">Batch Lomba</th>
-                                <th class="px-6 py-4">Tanggal Verifikasi</th>
-                                <th class="px-6 py-4 text-center">
+                                <TableHead class="px-6 py-4 text-slate-400">Nama Tim / Instansi</TableHead>
+                                <TableHead class="px-6 py-4 text-slate-400">Ketua Tim</TableHead>
+                                <TableHead class="px-6 py-4 text-slate-400">Batch Lomba</TableHead>
+                                <TableHead class="px-6 py-4 text-slate-400">Tanggal Verifikasi</TableHead>
+                                <TableHead class="px-6 py-4 text-center text-slate-400">
                                     Status Lomba
-                                </th>
-                                <th class="px-6 py-4 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody
+                                </TableHead>
+                                <TableHead class="px-6 py-4 text-center text-slate-400">Aksi</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody
                             class="divide-y divide-slate-100 text-xs font-bold text-slate-700"
                         >
-                            <tr v-if="filteredTeams.length === 0">
-                                <td
+                            <TableRow v-if="filteredTeams.length === 0" class="hover:bg-transparent">
+                                <TableCell
                                     colspan="6"
                                     class="py-12 text-center font-bold text-slate-400"
                                 >
                                     Tidak ada data tim terdaftar yang ditemukan.
-                                </td>
-                            </tr>
-                            <tr
+                                </TableCell>
+                            </TableRow>
+                            <TableRow
                                 v-for="team in filteredTeams"
                                 :key="team.id_tim"
-                                class="transition-colors hover:bg-slate-50/30"
+                                class="transition-colors hover:bg-slate-50/30 border-b border-slate-100"
                             >
                                 <!-- Team / Univ -->
-                                <td class="space-y-1 px-6 py-4">
+                                <TableCell class="space-y-1 px-6 py-4">
                                     <div
                                         class="text-sm font-extrabold text-blue-900"
                                     >
@@ -198,26 +214,26 @@ const closeTeamDetails = () => {
                                     >
                                         {{ team.universitas }}
                                     </div>
-                                </td>
+                                </TableCell>
 
                                 <!-- Ketua Tim -->
-                                <td
+                                <TableCell
                                     class="px-6 py-4 font-semibold text-slate-600"
                                 >
                                     {{ getKetuaName(team.members) }}
-                                </td>
+                                </TableCell>
 
                                 <!-- Batch -->
-                                <td class="px-6 py-4">
+                                <TableCell class="px-6 py-4">
                                     <span
                                         class="inline-block rounded-lg bg-slate-100 px-2.5 py-1 text-[10px] font-black tracking-wider text-slate-600 uppercase"
                                     >
                                         Batch {{ team.batch || 1 }}
                                     </span>
-                                </td>
+                                </TableCell>
 
                                 <!-- Verification Date -->
-                                <td
+                                <TableCell
                                     class="px-6 py-4 font-semibold text-slate-500"
                                 >
                                     {{
@@ -227,19 +243,20 @@ const closeTeamDetails = () => {
                                               )
                                             : '-'
                                     }}
-                                </td>
+                                </TableCell>
 
                                 <!-- Selection Status -->
-                                <td class="px-6 py-4 text-center">
-                                    <span
+                                <TableCell class="px-6 py-4 text-center">
+                                    <Badge
+                                        variant="outline"
                                         class="inline-block rounded-full border px-3 py-1 text-[9px] font-black tracking-wider uppercase shadow-sm"
                                         :class="[
                                             team.status_seleksi === 'final'
-                                                ? 'border-green-200 bg-green-50 text-green-600'
+                                                ? 'border-green-200 bg-green-50 text-green-600 hover:bg-green-50'
                                                 : team.status_seleksi ===
                                                     'tidak_lolos_final'
-                                                  ? 'border-red-200 bg-red-50 text-red-600'
-                                                  : 'border-blue-200 bg-blue-50 text-blue-600',
+                                                  ? 'border-red-200 bg-red-50 text-red-600 hover:bg-red-50'
+                                                  : 'border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-50',
                                         ]"
                                     >
                                         {{
@@ -247,151 +264,126 @@ const closeTeamDetails = () => {
                                                 team.status_seleksi,
                                             )
                                         }}
-                                    </span>
-                                </td>
+                                    </Badge>
+                                </TableCell>
 
                                 <!-- Action (Details Modal) -->
-                                <td class="px-6 py-4 text-center">
-                                    <button
+                                <TableCell class="px-6 py-4 text-center">
+                                    <Button
+                                        size="sm"
                                         @click="openTeamDetails(team)"
                                         class="inline-flex items-center space-x-1 rounded-lg bg-blue-950 px-3 py-1.5 text-[10px] font-black tracking-wider text-white uppercase shadow-sm transition hover:bg-blue-900"
                                     >
                                         <Info class="h-3.5 w-3.5" />
                                         <span>Detail Anggota</span>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
                 </div>
             </div>
         </div>
 
         <!-- Custom Details Modal (Centralized glassmorphic look) -->
-        <div
-            v-if="isDetailModalOpen && selectedTeamDetails"
-            class="fixed inset-0 z-50 overflow-y-auto"
-        >
-            <div
-                class="flex min-h-full items-center justify-center p-4 text-center"
-            >
-                <!-- Backdrop -->
-                <div
-                    class="fixed inset-0 bg-slate-900/5 backdrop-blur-md transition-opacity"
-                    @click="closeTeamDetails"
-                ></div>
-
-                <!-- Modal Content Wrapper -->
-                <div
-                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-2xl transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] transition-all"
-                >
-                    <!-- Header -->
-                    <div
-                        class="flex items-center justify-between border-b border-slate-100 p-6"
-                    >
-                        <div class="space-y-1">
-                            <h3
-                                class="text-lg leading-tight font-black text-slate-900"
-                            >
-                                Detail Anggota Kelompok
-                            </h3>
-                            <p
-                                class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
-                            >
-                                {{ selectedTeamDetails.nama_tim }} -
-                                {{ selectedTeamDetails.universitas }}
-                            </p>
-                        </div>
-                        <button
-                            @click="closeTeamDetails"
-                            class="rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+        <Dialog v-model:open="isDetailModalOpen" @update:open="(val) => !val && closeTeamDetails()">
+            <DialogContent v-if="selectedTeamDetails" class="rounded-3xl max-w-2xl p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+                <!-- Header -->
+                <DialogHeader class="border-b border-slate-100 p-6 flex flex-row items-center justify-between space-y-0">
+                    <div class="space-y-1">
+                        <DialogTitle class="text-lg leading-tight font-black text-slate-900">
+                            Detail Anggota Kelompok
+                        </DialogTitle>
+                        <p
+                            class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
                         >
-                            <X class="h-5 w-5" />
-                        </button>
+                            {{ selectedTeamDetails.nama_tim }} -
+                            {{ selectedTeamDetails.universitas }}
+                        </p>
                     </div>
+                </DialogHeader>
 
-                    <!-- Body -->
-                    <div class="space-y-6 p-6">
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div
-                                v-for="(
-                                    member, index
-                                ) in selectedTeamDetails.sortedMembers"
-                                :key="member.id_member"
-                                class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-5"
-                            >
-                                <div class="flex items-center justify-between">
+                <!-- Body -->
+                <div class="space-y-6 p-6">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div
+                            v-for="(
+                                member, index
+                            ) in selectedTeamDetails.sortedMembers"
+                            :key="member.id_member"
+                            class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-5"
+                        >
+                            <div class="flex items-center justify-between">
+                                <span
+                                    class="text-[9px] font-black tracking-wider text-slate-400 uppercase"
+                                >
+                                    {{
+                                        member.role === 'ketua'
+                                            ? 'Ketua Kelompok'
+                                            : `Anggota ${index}`
+                                    }}
+                                </span>
+                                <span
+                                    class="rounded border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase"
+                                    :class="
+                                        member.role === 'ketua'
+                                            ? 'border-amber-200 bg-amber-50 text-amber-700'
+                                            : 'border-slate-200 bg-slate-100 text-slate-600'
+                                    "
+                                >
+                                    {{ member.role }}
+                                </span>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="space-y-0.5">
                                     <span
-                                        class="text-[9px] font-black tracking-wider text-slate-400 uppercase"
+                                        class="text-[9px] font-bold tracking-wider text-slate-400 uppercase"
+                                        >Nama Lengkap</span
                                     >
-                                        {{
-                                            member.role === 'ketua'
-                                                ? 'Ketua Kelompok'
-                                                : `Anggota ${index}`
-                                        }}
-                                    </span>
-                                    <span
-                                        class="rounded border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase"
-                                        :class="
-                                            member.role === 'ketua'
-                                                ? 'border-amber-200 bg-amber-50 text-amber-700'
-                                                : 'border-slate-200 bg-slate-100 text-slate-600'
-                                        "
+                                    <p
+                                        class="text-xs font-extrabold text-slate-800"
                                     >
-                                        {{ member.role }}
-                                    </span>
+                                        {{ member.nama_peserta }}
+                                    </p>
                                 </div>
-                                <div class="space-y-1.5">
-                                    <div class="space-y-0.5">
-                                        <span
-                                            class="text-[9px] font-bold tracking-wider text-slate-400 uppercase"
-                                            >Nama Lengkap</span
-                                        >
-                                        <p
-                                            class="text-xs font-extrabold text-slate-800"
-                                        >
-                                            {{ member.nama_peserta }}
-                                        </p>
-                                    </div>
-                                    <div class="space-y-0.5">
-                                        <span
-                                            class="text-[9px] font-bold tracking-wider text-slate-400 uppercase"
-                                            >NIM / Identitas</span
-                                        >
-                                        <p
-                                            class="text-xs font-extrabold text-slate-800"
-                                        >
-                                            {{ member.nim_peserta }}
-                                        </p>
-                                    </div>
-                                    <div class="space-y-0.5">
-                                        <span
-                                            class="text-[9px] font-bold tracking-wider text-slate-400 uppercase"
-                                            >Jurusan</span
-                                        >
-                                        <p
-                                            class="text-xs font-extrabold text-slate-800"
-                                        >
-                                            {{ member.jurusan || '-' }}
-                                        </p>
-                                    </div>
+                                <div class="space-y-0.5">
+                                    <span
+                                        class="text-[9px] font-bold tracking-wider text-slate-400 uppercase"
+                                        >NIM / Identitas</span
+                                    >
+                                    <p
+                                        class="text-xs font-extrabold text-slate-800"
+                                    >
+                                        {{ member.nim_peserta }}
+                                    </p>
+                                </div>
+                                <div class="space-y-0.5">
+                                    <span
+                                        class="text-[9px] font-bold tracking-wider text-slate-400 uppercase"
+                                        >Jurusan</span
+                                    >
+                                    <p
+                                        class="text-xs font-extrabold text-slate-800"
+                                    >
+                                        {{ member.jurusan || '-' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Footer -->
-                    <div class="flex justify-end border-t border-slate-100 p-6">
-                        <button
-                            @click="closeTeamDetails"
-                            class="rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-slate-800"
-                        >
-                            Tutup Detail
-                        </button>
-                    </div>
                 </div>
-            </div>
-        </div>
+
+                <!-- Footer -->
+                <div class="flex justify-end border-t border-slate-100 p-6">
+                    <Button
+                        @click="closeTeamDetails"
+                        class="rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-slate-800"
+                    >
+                        Tutup Detail
+                    </Button>
+                </div>
+            </DialogContent>
+        </Dialog>
     </CitechDashboardLayout>
 </template>
 
