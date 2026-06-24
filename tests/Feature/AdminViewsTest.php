@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Tim;
 use App\Models\DokumenSubmission;
+use App\Models\Tim;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,11 +19,11 @@ class AdminViewsTest extends TestCase
 
         // Access registered teams
         $response1 = $this->get(route('admin.tim-terdaftar'));
-        $response1->assertRedirect(route('dashboard'));
+        $response1->assertStatus(403);
 
         // Access submissions
         $response2 = $this->get(route('admin.submission'));
-        $response2->assertRedirect(route('dashboard'));
+        $response2->assertStatus(403);
     }
 
     public function test_admin_can_access_tim_terdaftar_view()

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MemberTim extends Model
 {
+    /** @use HasFactory<Factory<MemberTim>> */
     use HasFactory;
 
     /**
@@ -27,7 +29,7 @@ class MemberTim extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'id_tim',
@@ -39,6 +41,8 @@ class MemberTim extends Model
 
     /**
      * Get the team that the member belongs to.
+     *
+     * @return BelongsTo<Tim, $this>
      */
     public function tim(): BelongsTo
     {

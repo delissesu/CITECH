@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pembayaran extends Model
 {
+    /** @use HasFactory<Factory<Pembayaran>> */
     use HasFactory;
 
     /**
@@ -35,7 +37,7 @@ class Pembayaran extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'id_tim',
@@ -46,16 +48,21 @@ class Pembayaran extends Model
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'uploaded_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'uploaded_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the team associated with the payment.
+     *
+     * @return BelongsTo<Tim, $this>
      */
     public function tim(): BelongsTo
     {

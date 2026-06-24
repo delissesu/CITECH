@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Tim;
+use App\Enums\StatusPembayaran;
+use App\Models\DokumenRegistrasi;
 use App\Models\Pembayaran;
+use App\Models\Tim;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -37,7 +39,7 @@ class PaymentVerificationTest extends TestCase
         ]);
 
         $response->assertRedirect();
-        
+
         // Assert record exists in database
         $this->assertDatabaseHas('pembayaran', [
             'id_tim' => $tim->id_tim,
@@ -78,7 +80,7 @@ class PaymentVerificationTest extends TestCase
         $response = $this->delete(route('peserta.tim.pembayaran.destroy'));
 
         $response->assertRedirect();
-        
+
         // Assert record is deleted from database
         $this->assertDatabaseMissing('pembayaran', [
             'id_pembayaran' => $pembayaran->id_pembayaran,
@@ -99,6 +101,14 @@ class PaymentVerificationTest extends TestCase
             'universitas' => 'Test University',
             'status_seleksi' => 'belum_seleksi',
             'batch' => 1,
+        ]);
+
+        // Create approved registration document (required before team can advance)
+        DokumenRegistrasi::create([
+            'id_tim' => $tim->id_tim,
+            'link_file_registrasi' => 'dokumen_registrasi/test.pdf',
+            'status_registrasi' => 'berhasil',
+            'uploaded_at' => now(),
         ]);
 
         $pembayaran = Pembayaran::create([
@@ -126,6 +136,55 @@ class PaymentVerificationTest extends TestCase
         $this->assertDatabaseHas('tim', [
             'id_tim' => $tim->id_tim,
             'status_seleksi' => 'penyisihan',
+        ]);
+    }
+
+    public function test_admin_approve_payment_does_not_advance_team_without_approved_document()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $tim = Tim::create([
+            'id_user' => $user->id_user,
+            'nama_tim' => 'Test Team No Doc',
+            'universitas' => 'Test University',
+            'status_seleksi' => 'belum_seleksi',
+            'batch' => 1,
+        ]);
+
+        // Create a PENDING (not approved) registration document
+        DokumenRegistrasi::create([
+            'id_tim' => $tim->id_tim,
+            'link_file_registrasi' => 'dokumen_registrasi/pending.pdf',
+            'status_registrasi' => 'pending',
+            'uploaded_at' => now(),
+        ]);
+
+        $pembayaran = Pembayaran::create([
+            'id_tim' => $tim->id_tim,
+            'bukti_pembayaran' => 'bukti_pembayaran/test2.png',
+            'status_pembayaran' => 'pending',
+            'uploaded_at' => now(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->post(route('admin.pembayaran.update', $pembayaran->id_pembayaran), [
+            'status' => 'berhasil',
+        ]);
+
+        $response->assertRedirect();
+
+        // Assert payment is approved
+        $this->assertDatabaseHas('pembayaran', [
+            'id_pembayaran' => $pembayaran->id_pembayaran,
+            'status_pembayaran' => 'berhasil',
+        ]);
+
+        // Assert team status remains belum_seleksi (document not yet approved)
+        $this->assertDatabaseHas('tim', [
+            'id_tim' => $tim->id_tim,
+            'status_seleksi' => 'belum_seleksi',
         ]);
     }
 
@@ -169,6 +228,107 @@ class PaymentVerificationTest extends TestCase
         $this->assertDatabaseHas('tim', [
             'id_tim' => $tim->id_tim,
             'status_seleksi' => 'belum_seleksi',
+        ]);
+    }
+
+    public function test_peserta_cannot_cancel_approved_payment()
+    {
+        Storage::fake('public');
+
+        $user = User::factory()->create(['is_admin' => false]);
+        $this->actingAs($user);
+
+        $tim = Tim::create([
+            'id_user' => $user->id_user,
+            'nama_tim' => 'Test Team',
+            'universitas' => 'Test University',
+            'status_seleksi' => 'penyisihan',
+            'batch' => 1,
+        ]);
+
+        $filePath = Storage::disk('public')->put('bukti_pembayaran', UploadedFile::fake()->create('proof.png', 1024));
+
+        Pembayaran::create([
+            'id_tim' => $tim->id_tim,
+            'bukti_pembayaran' => $filePath,
+            'status_pembayaran' => StatusPembayaran::Berhasil->value,
+            'uploaded_at' => now(),
+        ]);
+
+        $response = $this->delete(route('peserta.tim.pembayaran.destroy'));
+
+        $response->assertSessionHasErrors(['bukti_pembayaran']);
+        $this->assertDatabaseHas('pembayaran', [
+            'id_tim' => $tim->id_tim,
+            'status_pembayaran' => StatusPembayaran::Berhasil->value,
+        ]);
+    }
+
+    public function test_admin_cannot_reprocess_already_processed_payment()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $tim = Tim::create([
+            'id_user' => $user->id_user,
+            'nama_tim' => 'Test Team',
+            'universitas' => 'Test University',
+            'status_seleksi' => 'penyisihan',
+            'batch' => 1,
+        ]);
+
+        $pembayaran = Pembayaran::create([
+            'id_tim' => $tim->id_tim,
+            'bukti_pembayaran' => 'bukti_pembayaran/test.png',
+            'status_pembayaran' => StatusPembayaran::Berhasil->value,
+            'uploaded_at' => now(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->post(route('admin.pembayaran.update', $pembayaran->id_pembayaran), [
+            'status' => 'ditolak',
+            'catatan' => 'Changed my mind.',
+        ]);
+
+        $response->assertSessionHasErrors(['status']);
+        $this->assertDatabaseHas('pembayaran', [
+            'id_pembayaran' => $pembayaran->id_pembayaran,
+            'status_pembayaran' => StatusPembayaran::Berhasil->value,
+        ]);
+    }
+
+    public function test_admin_reject_payment_requires_notes()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $tim = Tim::create([
+            'id_user' => $user->id_user,
+            'nama_tim' => 'Test Team',
+            'universitas' => 'Test University',
+            'status_seleksi' => 'belum_seleksi',
+            'batch' => 1,
+        ]);
+
+        $pembayaran = Pembayaran::create([
+            'id_tim' => $tim->id_tim,
+            'bukti_pembayaran' => 'bukti_pembayaran/test.png',
+            'status_pembayaran' => StatusPembayaran::Pending->value,
+            'uploaded_at' => now(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->post(route('admin.pembayaran.update', $pembayaran->id_pembayaran), [
+            'status' => 'ditolak',
+            // Missing 'catatan'
+        ]);
+
+        $response->assertSessionHasErrors(['catatan']);
+        $this->assertDatabaseHas('pembayaran', [
+            'id_pembayaran' => $pembayaran->id_pembayaran,
+            'status_pembayaran' => StatusPembayaran::Pending->value,
         ]);
     }
 }

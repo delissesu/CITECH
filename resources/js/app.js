@@ -12,10 +12,14 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => {
         const pages = import.meta.glob('./pages/**/*.vue');
-        const key = Object.keys(pages).find(k => k.toLowerCase() === `./pages/${name.toLowerCase()}.vue`);
+        const key = Object.keys(pages).find(
+            (k) => k.toLowerCase() === `./pages/${name.toLowerCase()}.vue`,
+        );
+
         if (!key) {
             throw new Error(`Page not found: ${name}`);
         }
+
         return typeof pages[key] === 'function' ? pages[key]() : pages[key];
     },
     setup({ el, App, props, plugin }) {

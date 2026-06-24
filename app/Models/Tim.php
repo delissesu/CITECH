@@ -2,14 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property int $id_tim
+ * @property int $id_user
+ * @property string $nama_tim
+ * @property string $universitas
+ * @property string $status_seleksi
+ * @property int $batch
+ */
 class Tim extends Model
 {
+    /** @use HasFactory<Factory<Tim>> */
     use HasFactory;
 
     /**
@@ -29,7 +39,7 @@ class Tim extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'id_user',
@@ -41,6 +51,8 @@ class Tim extends Model
 
     /**
      * Get the user that owns the team (usually the team leader).
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -49,6 +61,8 @@ class Tim extends Model
 
     /**
      * Get the members of the team.
+     *
+     * @return HasMany<MemberTim, $this>
      */
     public function members(): HasMany
     {
@@ -57,14 +71,8 @@ class Tim extends Model
 
     /**
      * Get the registration document for the team.
-     */
-    public function dokumenRegistrasi(): HasOne
-    {
-        return $this->hasOne(DokumenRegistrasi::class, 'id_tim', 'id_tim');
-    }
-
-    /**
-     * Get the registration document for the team (snake_case alias).
+     *
+     * @return HasOne<DokumenRegistrasi, $this>
      */
     public function dokumen_registrasi(): HasOne
     {
@@ -73,6 +81,8 @@ class Tim extends Model
 
     /**
      * Get the payment details for the team.
+     *
+     * @return HasOne<Pembayaran, $this>
      */
     public function pembayaran(): HasOne
     {
@@ -80,15 +90,9 @@ class Tim extends Model
     }
 
     /**
-     * Get the submission documents for the team.
-     */
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(DokumenSubmission::class, 'id_tim', 'id_tim');
-    }
-
-    /**
      * Get the single submission document for the team.
+     *
+     * @return HasOne<DokumenSubmission, $this>
      */
     public function submission(): HasOne
     {

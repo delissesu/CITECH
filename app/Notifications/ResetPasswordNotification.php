@@ -11,7 +11,6 @@ class ResetPasswordNotification extends ResetPasswordParent
      * Build the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable): MailMessage
     {
