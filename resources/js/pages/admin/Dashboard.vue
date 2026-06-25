@@ -1,15 +1,29 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Users, FileCheck, CreditCard, Trophy, Upload } from '@lucide/vue';
+import { Users, FileCheck, CreditCard, Trophy, Upload, ArrowRight, ExternalLink, Handshake } from '@lucide/vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
 
 defineProps({
     statistics: Object,
+    latestPembayaran: Array,
+    latestPersyaratan: Array,
 });
+
+const formatDate = (dateStr: string) => {
+    if (!dateStr) return '-';
+    const options: Intl.DateTimeFormatOptions = {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    };
+    return new Date(dateStr).toLocaleDateString('id-ID', options);
+};
 </script>
 
 <template>
-    <Head title="Dashboard Admin - CITECH 2026" />
+    <Head title="Dashboard Admin" />
 
     <CitechDashboardLayout activeMenu="admin.dashboard" role="admin">
         <template #header-title>
@@ -146,6 +160,166 @@ defineProps({
                         </div>
                     </div>
                 </Link>
+
+                <Link
+                    :href="route('admin.kelola-sponsor')"
+                    class="rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition hover:shadow-md"
+                >
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef2ff]"
+                        >
+                            <Handshake class="h-5 w-5 text-indigo-600" />
+                        </div>
+                        <div>
+                            <p
+                                class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            >
+                                Total Sponsor
+                            </p>
+                            <p class="text-2xl font-black text-slate-800">
+                                {{ statistics.totalSponsor }}
+                            </p>
+                        </div>
+                    </div>
+                </Link>
+            </div>
+
+            <!-- Quick Verifications Panel -->
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <!-- Latest Payments Verification Card -->
+                <div
+                    class="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_10px_35px_rgba(0,0,0,0.03)]"
+                >
+                    <div class="flex items-center justify-between border-b border-slate-50 pb-4 mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50">
+                                <CreditCard class="h-4.5 w-4.5 text-rose-600" />
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-extrabold text-slate-800">
+                                    Konfirmasi Pembayaran Terbaru
+                                </h4>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                    5 pendaftaran yang baru masuk
+                                </p>
+                            </div>
+                        </div>
+                        <Link
+                            :href="route('admin.pembayaran')"
+                            class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-900 hover:text-blue-700 transition"
+                        >
+                            <span>Lihat Semua</span>
+                            <ArrowRight class="h-3 w-3" />
+                        </Link>
+                    </div>
+
+                    <!-- Payments List -->
+                    <div class="divide-y divide-slate-100">
+                        <div v-if="!latestPembayaran || latestPembayaran.length === 0" class="py-8 text-center text-xs font-bold text-slate-400">
+                            Tidak ada pembayaran pending baru.
+                        </div>
+                        <div
+                            v-else
+                            v-for="pembayaran in latestPembayaran"
+                            :key="pembayaran.id_pembayaran"
+                            class="flex items-center justify-between py-3 transition hover:bg-slate-50/50 rounded-xl px-2"
+                        >
+                            <div class="space-y-1">
+                                <div class="text-xs font-extrabold text-slate-800">
+                                    {{ pembayaran.tim?.nama_tim || 'Tanpa Nama Tim' }}
+                                </div>
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                                    {{ pembayaran.tim?.universitas || '-' }}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="text-right">
+                                    <div class="text-[10px] font-extrabold text-slate-600">
+                                        Batch {{ pembayaran.tim?.batch || 1 }}
+                                    </div>
+                                    <div class="text-[9px] font-bold text-slate-400">
+                                        {{ formatDate(pembayaran.uploaded_at) }}
+                                    </div>
+                                </div>
+                                <Link
+                                    :href="route('admin.pembayaran')"
+                                    class="rounded-lg border border-slate-100 bg-slate-50/50 p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition"
+                                    title="Verifikasi"
+                                >
+                                    <ExternalLink class="h-3.5 w-3.5" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latest Requirements Verification Card -->
+                <div
+                    class="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_10px_35px_rgba(0,0,0,0.03)]"
+                >
+                    <div class="flex items-center justify-between border-b border-slate-50 pb-4 mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50">
+                                <FileCheck class="h-4.5 w-4.5 text-amber-600" />
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-extrabold text-slate-800">
+                                    Konfirmasi Persyaratan Terbaru
+                                </h4>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                    5 dokumen yang baru masuk
+                                </p>
+                            </div>
+                        </div>
+                        <Link
+                            :href="route('admin.persyaratan')"
+                            class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-900 hover:text-blue-700 transition"
+                        >
+                            <span>Lihat Semua</span>
+                            <ArrowRight class="h-3 w-3" />
+                        </Link>
+                    </div>
+
+                    <!-- Requirements List -->
+                    <div class="divide-y divide-slate-100">
+                        <div v-if="!latestPersyaratan || latestPersyaratan.length === 0" class="py-8 text-center text-xs font-bold text-slate-400">
+                            Tidak ada persyaratan pending baru.
+                        </div>
+                        <div
+                            v-else
+                            v-for="persyaratan in latestPersyaratan"
+                            :key="persyaratan.id_registrasi"
+                            class="flex items-center justify-between py-3 transition hover:bg-slate-50/50 rounded-xl px-2"
+                        >
+                            <div class="space-y-1">
+                                <div class="text-xs font-extrabold text-slate-800">
+                                    {{ persyaratan.tim?.nama_tim || 'Tanpa Nama Tim' }}
+                                </div>
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                                    {{ persyaratan.tim?.universitas || '-' }}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="text-right">
+                                    <span class="inline-block rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[8px] font-black tracking-wider uppercase text-amber-600">
+                                        Pending
+                                    </span>
+                                    <div class="text-[9px] font-bold text-slate-400">
+                                        {{ formatDate(persyaratan.uploaded_at) }}
+                                    </div>
+                                </div>
+                                <Link
+                                    :href="route('admin.persyaratan')"
+                                    class="rounded-lg border border-slate-100 bg-slate-50/50 p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition"
+                                    title="Verifikasi"
+                                >
+                                    <ExternalLink class="h-3.5 w-3.5" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </CitechDashboardLayout>

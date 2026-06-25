@@ -21,15 +21,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 
 const props = defineProps({
     sponsors: {
@@ -221,7 +212,7 @@ const toggleStatus = (sponsor) => {
 </script>
 
 <template>
-    <Head title="Kelola Sponsor - CITECH 2026" />
+    <Head title="Kelola Sponsor" />
 
     <CitechDashboardLayout activeMenu="admin.kelola-sponsor" role="admin">
         <template #header-title>
@@ -612,44 +603,64 @@ const toggleStatus = (sponsor) => {
         </Dialog>
 
         <!-- Delete Confirmation Modal -->
-        <AlertDialog v-model:open="showConfirmDelete" @update:open="(val) => !val && cancelDelete()">
-            <AlertDialogContent class="rounded-3xl max-w-sm">
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="rounded-2xl border border-red-100 bg-red-50 p-3 text-red-600"
-                        >
-                            <AlertCircle class="h-6 w-6" />
+        <div
+            v-if="showConfirmDelete"
+            class="fixed inset-0 z-50 overflow-y-auto"
+        >
+            <div
+                class="flex min-h-full items-center justify-center p-4 text-center"
+            >
+                <!-- Backdrop -->
+                <div
+                    class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+                    @click="cancelDelete"
+                ></div>
+
+                <!-- Modal Content Wrapper -->
+                <div
+                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-md transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] transition-all"
+                >
+                    <div class="space-y-6 p-6">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="rounded-2xl border border-red-100 bg-red-50 p-3 text-red-600"
+                            >
+                                <AlertCircle class="h-6 w-6" />
+                            </div>
+                            <div class="space-y-1">
+                                <h3 class="text-base font-extrabold text-slate-800">
+                                    Hapus Mitra Sponsor
+                                </h3>
+                                <p class="text-xs leading-relaxed text-slate-500">
+                                    Apakah kamu yakin ingin menghapus sponsor
+                                    <strong class="text-slate-800">{{
+                                        deleteSponsorName
+                                    }}</strong>? Tindakan ini akan menghapus data beserta
+                                    berkas logo secara permanen.
+                                </p>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <AlertDialogTitle class="text-base font-extrabold text-slate-800">
-                                Hapus Mitra Sponsor
-                            </AlertDialogTitle>
-                            <AlertDialogDescription class="text-xs leading-relaxed text-slate-500">
-                                Apakah kamu yakin ingin menghapus sponsor
-                                <strong class="text-slate-800">{{
-                                    deleteSponsorName
-                                }}</strong>? Tindakan ini akan menghapus data beserta
-                                berkas logo secara permanen.
-                            </AlertDialogDescription>
+
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button
+                                type="button"
+                                @click="cancelDelete"
+                                class="rounded-xl bg-slate-100 px-4 py-2.5 text-xs font-extrabold tracking-wider text-slate-600 uppercase border-none transition hover:bg-slate-200"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                type="button"
+                                @click="executeDelete"
+                                class="rounded-xl bg-red-600 px-4 py-2.5 text-xs font-extrabold tracking-wider text-white uppercase border-none shadow-md transition hover:scale-[1.01] hover:bg-red-700 hover:shadow-red-500/10"
+                            >
+                                Hapus Permanen
+                            </button>
                         </div>
                     </div>
-
-                <AlertDialogFooter class="flex justify-end gap-3 pt-2">
-                    <AlertDialogCancel
-                        @click="cancelDelete"
-                        class="rounded-xl bg-slate-100 px-4 py-2.5 text-xs font-extrabold tracking-wider text-slate-600 uppercase border-none transition hover:bg-slate-200"
-                    >
-                        Batal
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                        @click="executeDelete"
-                        class="rounded-xl bg-red-600 px-4 py-2.5 text-xs font-extrabold tracking-wider text-white uppercase border-none shadow-md transition hover:scale-[1.01] hover:bg-red-700 hover:shadow-red-500/10"
-                    >
-                        Hapus Permanen
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+                </div>
+            </div>
+        </div>
     </CitechDashboardLayout>
 </template>
 

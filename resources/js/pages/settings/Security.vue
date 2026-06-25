@@ -26,7 +26,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Keamanan Akun - CITECH 2026" />
+    <Head title="Keamanan Akun" />
 
     <h1 class="sr-only">Keamanan Akun</h1>
 

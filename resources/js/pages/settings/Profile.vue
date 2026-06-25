@@ -22,7 +22,7 @@ const user = computed(() => page.props.auth.user);
 </script>
 
 <template>
-    <Head title="Pengaturan Profil - CITECH 2026" />
+    <Head title="Pengaturan Profil" />
 
     <h1 class="sr-only">Pengaturan Profil</h1>
 

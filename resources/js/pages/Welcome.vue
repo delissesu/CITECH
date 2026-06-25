@@ -380,7 +380,7 @@ return '';
 </script>
 
 <template>
-    <Head title="CITECH 2026 - Carnival Technology UNEJ" />
+    <Head title="Carnival Technology UNEJ" />
 
     <div
         class="animate-page-fade relative min-h-screen overflow-x-hidden bg-slate-50/20 font-sans text-slate-700"

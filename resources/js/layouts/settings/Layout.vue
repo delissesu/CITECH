@@ -25,10 +25,10 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 const page = usePage<any>();
 const user = computed(() => page.props.auth.user);
 const role = computed(() => user.value?.is_admin ? 'admin' : 'peserta');
-const activeMenu = computed(() => role.value === 'admin' ? '' : 'peserta.profil');
+const activeMenu = computed(() => role.value === 'admin' ? 'admin.profil' : 'peserta.profil');
 
-const backRoute = computed(() => role.value === 'admin' ? route('admin.dashboard') : route('peserta.profil'));
-const backText = computed(() => role.value === 'admin' ? 'Dashboard' : 'Profil');
+const backRoute = computed(() => role.value === 'admin' ? route('admin.profil') : route('peserta.profil'));
+const backText = computed(() => 'Profil');
 </script>
 
 <template>

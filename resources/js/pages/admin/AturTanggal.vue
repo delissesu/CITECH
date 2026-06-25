@@ -5,16 +5,6 @@ import { ref } from 'vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 
 const props = defineProps({
     timelines: Array,
@@ -73,7 +63,7 @@ const cancelSave = () => {
 </script>
 
 <template>
-    <Head title="Atur Tanggal Timeline - CITECH 2026" />
+    <Head title="Atur Tanggal Timeline" />
 
     <CitechDashboardLayout activeMenu="admin.atur-tanggal" role="admin">
         <template #header-title>
@@ -169,33 +159,53 @@ const cancelSave = () => {
             </form>
         </div>
 
-        <!-- Confirmation Dialog -->
-        <AlertDialog v-model:open="showConfirm">
-            <AlertDialogContent class="rounded-2xl max-w-sm">
-                <AlertDialogHeader>
-                    <AlertDialogTitle class="text-lg font-black text-slate-800">
-                        Konfirmasi Perubahan
-                    </AlertDialogTitle>
-                    <AlertDialogDescription class="text-sm leading-relaxed text-slate-500">
-                        Apakah kamu yakin untuk mengubah tanggal submission?
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter class="flex justify-end gap-3 pt-2">
-                    <AlertDialogCancel
-                        @click="cancelSave"
-                        class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600 border-none transition hover:bg-slate-200"
-                    >
-                        Batal
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                        @click="confirmSave"
-                        class="rounded-xl bg-[#1e4d8c] px-4 py-2 text-sm font-bold text-white border-none transition hover:bg-[#153a6b]"
-                    >
-                        Ya, Simpan
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+// Confirmation Dialog
+        <div
+            v-if="showConfirm"
+            class="fixed inset-0 z-50 overflow-y-auto"
+        >
+            <div
+                class="flex min-h-full items-center justify-center p-4 text-center"
+            >
+                <!-- Backdrop -->
+                <div
+                    class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+                    @click="cancelSave"
+                ></div>
+
+                <!-- Modal Content Wrapper -->
+                <div
+                    class="animate-fade-in-up relative z-10 my-8 inline-block w-full max-w-sm transform overflow-hidden rounded-3xl border border-slate-100 bg-white text-left align-middle shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] transition-all"
+                >
+                    <div class="space-y-6 p-6">
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-black text-slate-800">
+                                Konfirmasi Perubahan
+                            </h3>
+                            <p class="text-sm leading-relaxed text-slate-500">
+                                Apakah kamu yakin untuk mengubah tanggal submission?
+                            </p>
+                        </div>
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button
+                                type="button"
+                                @click="cancelSave"
+                                class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600 border-none transition hover:bg-slate-200"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                type="button"
+                                @click="confirmSave"
+                                class="rounded-xl bg-[#1e4d8c] px-4 py-2 text-sm font-bold text-white border-none transition hover:bg-[#153a6b]"
+                            >
+                                Ya, Simpan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </CitechDashboardLayout>
 </template>
 

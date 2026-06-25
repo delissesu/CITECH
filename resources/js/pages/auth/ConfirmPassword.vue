@@ -19,7 +19,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Konfirmasi Password - CITECH 2026" />
+    <Head title="Konfirmasi Password" />
 
     <div class="space-y-6">
         <div class="border-b border-slate-100 pb-4 mb-2">

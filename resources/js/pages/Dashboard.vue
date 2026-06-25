@@ -118,7 +118,7 @@ const getTimelineCircleClass = (start, end) => {
 </script>
 
 <template>
-    <Head title="Dashboard Peserta - CITECH 2026" />
+    <Head title="Dashboard Peserta" />
 
     <CitechDashboardLayout activeMenu="dashboard" role="peserta">
         <template #header-title>

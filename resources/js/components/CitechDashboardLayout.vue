@@ -61,7 +61,7 @@ const menus = computed(() => {
     if (props.role === 'admin') {
         return [
             {
-                name: 'Beranda / Dashboard',
+                name: 'Dashboard',
                 route: 'admin.dashboard',
                 icon: Home,
             },
@@ -94,6 +94,11 @@ const menus = computed(() => {
                 name: 'Kelola Sponsor',
                 route: 'admin.kelola-sponsor',
                 icon: Handshake,
+            },
+            {
+                name: 'Profil',
+                route: 'admin.profil',
+                icon: User,
             },
         ];
     } else {

@@ -9,6 +9,7 @@ import {
     FileText,
     CheckCircle2,
     X,
+    Download,
 } from '@lucide/vue';
 import { ref, computed } from 'vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
@@ -118,7 +119,7 @@ const closeTeamDetails = () => {
 </script>
 
 <template>
-    <Head title="Tim Terdaftar - CITECH 2026" />
+    <Head title="Tim Terdaftar" />
 
     <CitechDashboardLayout activeMenu="admin.tim-terdaftar" role="admin">
         <template #header-title>
@@ -150,19 +151,32 @@ const closeTeamDetails = () => {
                     </p>
                 </div>
 
-                <!-- Search Input -->
-                <div class="relative w-full flex-shrink-0 md:w-80">
-                    <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+                <!-- Search & Export -->
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center w-full flex-shrink-0 md:w-auto">
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-64 md:w-80">
+                        <span
+                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+                        >
+                            <Search class="h-4 w-4" />
+                        </span>
+                        <input
+                            type="text"
+                            v-model="searchQuery"
+                            placeholder="Cari nama tim atau universitas..."
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pr-4 pl-10 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Export Button -->
+                    <a
+                        :href="route('admin.tim-terdaftar.export')"
+                        target="_blank"
+                        class="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition"
                     >
-                        <Search class="h-4 w-4" />
-                    </span>
-                    <input
-                        type="text"
-                        v-model="searchQuery"
-                        placeholder="Cari nama tim atau universitas..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pr-4 pl-10 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                    />
+                        <Download class="h-4 w-4" />
+                        <span>Export Excel</span>
+                    </a>
                 </div>
             </div>
 

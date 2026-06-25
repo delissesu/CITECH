@@ -1,13 +1,21 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { User, Settings, Lock } from '@lucide/vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
+import { computed } from 'vue';
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+const isAdmin = computed(() => !!user.value?.is_admin);
+const role = computed(() => isAdmin.value ? 'admin' : 'peserta');
+const activeMenu = computed(() => isAdmin.value ? 'admin.profil' : 'peserta.profil');
+const subtitle = computed(() => isAdmin.value ? 'Administrator' : 'Peserta Citech 2026');
 </script>
 
 <template>
-    <Head title="Profil Pengguna - CITECH 2026" />
+    <Head title="Profil Pengguna" />
 
-    <CitechDashboardLayout activeMenu="peserta.profil" role="peserta">
+    <CitechDashboardLayout :activeMenu="activeMenu" :role="role">
         <template #header-title>
             <h2 class="text-lg font-black tracking-wide text-slate-800">
                 Profil Saya
@@ -29,7 +37,7 @@ import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
                             {{ $page.props.auth.user.name }}
                         </h3>
                         <p class="text-xs font-bold text-slate-400">
-                            Peserta Citech 2026
+                            {{ subtitle }}
                         </p>
                     </div>
                 </div>

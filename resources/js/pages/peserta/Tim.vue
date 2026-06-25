@@ -337,7 +337,7 @@ const clearAnggota2 = () => {
 </script>
 
 <template>
-    <Head title="Manajemen Tim - CITECH 2026" />
+    <Head title="Manajemen Tim" />
 
     <CitechDashboardLayout activeMenu="peserta.tim" role="peserta">
         <template #header-title>

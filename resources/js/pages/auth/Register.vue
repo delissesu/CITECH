@@ -34,7 +34,7 @@ const criteria = computed(() => [
 </script>
 
 <template>
-    <Head title="Daftar Akun - CITECH 2026" />
+    <Head title="Daftar Akun" />
 
     <div
         class="flex min-h-screen items-center justify-center bg-slate-100 p-2 font-sans sm:p-6 md:p-8"

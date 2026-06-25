@@ -21,7 +21,7 @@ const verificationLinkSent = computed(
 </script>
 
 <template>
-    <Head title="Verifikasi Email - CITECH 2026" />
+    <Head title="Verifikasi Email" />
 
     <div
         class="flex min-h-screen items-center justify-center bg-slate-100 p-2 font-sans sm:p-6 md:p-8"

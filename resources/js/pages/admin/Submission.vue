@@ -6,6 +6,7 @@ import {
     ExternalLink,
     Calendar,
     CheckCircle2,
+    Download,
 } from '@lucide/vue';
 import { ref, computed } from 'vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
@@ -16,13 +17,13 @@ const props = defineProps({
 
 const searchQuery = ref('');
 
-// Filter teams by search query
+// Filter and sort teams by submission upload date (newest to oldest)
 const filteredTeams = computed(() => {
     if (!props.teams) {
-return [];
-}
+        return [];
+    }
 
-    return props.teams.filter((team) => {
+    const result = props.teams.filter((team) => {
         const query = searchQuery.value.toLowerCase();
 
         return (
@@ -30,6 +31,14 @@ return [];
             team.universitas.toLowerCase().includes(query)
         );
     });
+
+    result.sort((a, b) => {
+        const dateA = a.submission ? new Date(a.submission.uploaded_at).getTime() : 0;
+        const dateB = b.submission ? new Date(b.submission.uploaded_at).getTime() : 0;
+        return dateB - dateA;
+    });
+
+    return result;
 });
 
 const formatDate = (dateStr) => {
@@ -60,7 +69,7 @@ return '-';
 </script>
 
 <template>
-    <Head title="Submission Karya - CITECH 2026" />
+    <Head title="Submission Karya" />
 
     <CitechDashboardLayout activeMenu="admin.submission" role="admin">
         <template #header-title>
@@ -91,19 +100,32 @@ return '-';
                     </p>
                 </div>
 
-                <!-- Search Input -->
-                <div class="relative w-full flex-shrink-0 md:w-80">
-                    <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+                <!-- Search & Export -->
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center w-full flex-shrink-0 md:w-auto">
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-64 md:w-80">
+                        <span
+                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+                        >
+                            <Search class="h-4 w-4" />
+                        </span>
+                        <input
+                            type="text"
+                            v-model="searchQuery"
+                            placeholder="Cari nama tim atau universitas..."
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pr-4 pl-10 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Export Button -->
+                    <a
+                        :href="route('admin.submission.export')"
+                        target="_blank"
+                        class="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition"
                     >
-                        <Search class="h-4 w-4" />
-                    </span>
-                    <input
-                        type="text"
-                        v-model="searchQuery"
-                        placeholder="Cari nama tim atau universitas..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pr-4 pl-10 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                    />
+                        <Download class="h-4 w-4" />
+                        <span>Export Excel</span>
+                    </a>
                 </div>
             </div>
 

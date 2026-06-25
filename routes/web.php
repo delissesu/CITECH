@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AturTanggalController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KonfirmasiPembayaranController;
 use App\Http\Controllers\Admin\KonfirmasiPersyaratanController;
+use App\Http\Controllers\Admin\ProfilController as AdminProfilController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\SubmissionController as AdminSubmissionController;
 use App\Http\Controllers\Admin\TimTerdaftarController;
@@ -49,7 +50,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('/konfirmasi-pembayaran/{id_pembayaran}/status', [KonfirmasiPembayaranController::class, 'update'])->name('admin.pembayaran.update');
 
     Route::get('/tim-terdaftar', [TimTerdaftarController::class, 'index'])->name('admin.tim-terdaftar');
+    Route::get('/tim-terdaftar/export', [TimTerdaftarController::class, 'export'])->name('admin.tim-terdaftar.export');
     Route::get('/submission', [AdminSubmissionController::class, 'index'])->name('admin.submission');
+    Route::get('/submission/export', [AdminSubmissionController::class, 'export'])->name('admin.submission.export');
 
     Route::get('/atur-tanggal', [AturTanggalController::class, 'index'])->name('admin.atur-tanggal');
     Route::post('/atur-tanggal', [AturTanggalController::class, 'update'])->name('admin.atur-tanggal.update');
@@ -58,6 +61,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('/kelola-sponsor', [SponsorController::class, 'store'])->name('admin.kelola-sponsor.store');
     Route::post('/kelola-sponsor/{id}', [SponsorController::class, 'update'])->name('admin.kelola-sponsor.update');
     Route::delete('/kelola-sponsor/{id}', [SponsorController::class, 'destroy'])->name('admin.kelola-sponsor.destroy');
+
+    Route::get('/profil', [AdminProfilController::class, 'index'])->name('admin.profil');
 });
 
 require __DIR__.'/auth.php';

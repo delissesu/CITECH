@@ -19,6 +19,7 @@ const props = defineProps({
 });
 
 const searchQuery = ref('');
+const statusFilter = ref('all');
 const isRejectModalOpen = ref(false);
 const selectedRegistrasiId = ref(null);
 
@@ -27,20 +28,50 @@ const rejectionForm = useForm({
     catatan: '',
 });
 
-// Filter teams by search query
+// Filter and sort teams by status and date
 const filteredTeams = computed(() => {
     if (!props.teams) {
-return [];
-}
+        return [];
+    }
 
-    return props.teams.filter((team) => {
+    const result = props.teams.filter((team) => {
         const query = searchQuery.value.toLowerCase();
+        const matchesQuery = team.nama_tim.toLowerCase().includes(query) ||
+                             team.universitas.toLowerCase().includes(query);
 
-        return (
-            team.nama_tim.toLowerCase().includes(query) ||
-            team.universitas.toLowerCase().includes(query)
-        );
+        if (!matchesQuery) return false;
+
+        if (statusFilter.value !== 'all') {
+            if (statusFilter.value === 'belum') {
+                return !team.dokumen_registrasi;
+            }
+            return team.dokumen_registrasi && team.dokumen_registrasi.status_registrasi === statusFilter.value;
+        }
+
+        return true;
     });
+
+    result.sort((a, b) => {
+        const statusA = a.dokumen_registrasi ? a.dokumen_registrasi.status_registrasi : 'pending_upload';
+        const statusB = b.dokumen_registrasi ? b.dokumen_registrasi.status_registrasi : 'pending_upload';
+
+        const weight = {
+            'pending': 1,
+            'pending_upload': 2,
+            'ditolak': 3,
+            'berhasil': 4
+        };
+
+        const diff = (weight[statusA] || 5) - (weight[statusB] || 5);
+        if (diff !== 0) return diff;
+
+        // Secondary sort: upload date (uploaded_at) descending
+        const dateA = a.dokumen_registrasi ? new Date(a.dokumen_registrasi.uploaded_at).getTime() : 0;
+        const dateB = b.dokumen_registrasi ? new Date(b.dokumen_registrasi.uploaded_at).getTime() : 0;
+        return dateB - dateA;
+    });
+
+    return result;
 });
 
 const formatDate = (dateStr) => {
@@ -109,7 +140,7 @@ const submitRejection = () => {
 </script>
 
 <template>
-    <Head title="Konfirmasi Persyaratan - CITECH 2026" />
+    <Head title="Konfirmasi Persyaratan" />
 
     <CitechDashboardLayout activeMenu="admin.persyaratan" role="admin">
         <template #header-title>
@@ -142,19 +173,36 @@ const submitRejection = () => {
                     </p>
                 </div>
 
-                <!-- Search Input -->
-                <div class="relative w-full flex-shrink-0 md:w-80">
-                    <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
-                    >
-                        <Search class="h-4 w-4" />
-                    </span>
-                    <input
-                        type="text"
-                        v-model="searchQuery"
-                        placeholder="Cari tim atau universitas..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pr-4 pl-10 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                    />
+                <!-- Search & Filter Status -->
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center w-full flex-shrink-0 md:w-auto">
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-64 md:w-80">
+                        <span
+                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+                        >
+                            <Search class="h-4 w-4" />
+                        </span>
+                        <input
+                            type="text"
+                            v-model="searchQuery"
+                            placeholder="Cari tim atau universitas..."
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pr-4 pl-10 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Status Filter Dropdown -->
+                    <div class="relative w-full sm:w-44">
+                        <select
+                            v-model="statusFilter"
+                            class="w-full rounded-xl border border-slate-200 bg-white py-2.5 px-3 pr-8 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:outline-none cursor-pointer shadow-sm hover:border-slate-300 transition"
+                        >
+                            <option value="all">Semua Status</option>
+                            <option value="belum">Belum Mengunggah</option>
+                            <option value="pending">Pending</option>
+                            <option value="ditolak">Ditolak / Gagal</option>
+                            <option value="berhasil">Berhasil</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
