@@ -55,22 +55,39 @@ const formatTimelineDate = (start, end) => {
 
 const getTimelineStatus = (start, end) => {
     const now = new Date();
-    const startD = new Date(start);
-    const endD = new Date(end);
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    if (now > endD) {
+    const startD = new Date(start);
+    const startMidnight = new Date(
+        startD.getFullYear(),
+        startD.getMonth(),
+        startD.getDate(),
+    );
+
+    const endD = new Date(end);
+    const endMidnight = new Date(
+        endD.getFullYear(),
+        endD.getMonth(),
+        endD.getDate(),
+        23,
+        59,
+        59,
+        999,
+    );
+
+    if (today > endMidnight) {
         return {
             label: 'Selesai',
             class: 'bg-green-100 text-green-700 border-green-200',
         };
-    } else if (now >= startD && now <= endD) {
+    } else if (today >= startMidnight && today <= endMidnight) {
         return {
             label: 'Sedang Berlangsung',
             class: 'bg-amber-100 text-amber-700 border-amber-200',
         };
     } else {
-        const diffMs = startD - now;
-        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        const diffMs = startMidnight - today;
+        const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
         if (diffDays <= 0) {
             return {
@@ -98,12 +115,29 @@ const getTimelineStatus = (start, end) => {
 
 const getTimelineCircleClass = (start, end) => {
     const now = new Date();
-    const startD = new Date(start);
-    const endD = new Date(end);
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    if (now > endD) {
+    const startD = new Date(start);
+    const startMidnight = new Date(
+        startD.getFullYear(),
+        startD.getMonth(),
+        startD.getDate(),
+    );
+
+    const endD = new Date(end);
+    const endMidnight = new Date(
+        endD.getFullYear(),
+        endD.getMonth(),
+        endD.getDate(),
+        23,
+        59,
+        59,
+        999,
+    );
+
+    if (today > endMidnight) {
         return 'bg-amber-500 border-amber-500';
-    } else if (now >= startD && now <= endD) {
+    } else if (today >= startMidnight && today <= endMidnight) {
         return 'bg-amber-500 border-amber-500 ring-4 ring-amber-500/25';
     } else {
         return 'bg-white border-slate-300';

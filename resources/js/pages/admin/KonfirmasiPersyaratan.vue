@@ -281,27 +281,37 @@ const submitRejection = () => {
 
                                 <!-- Members count/details -->
                                 <td class="px-6 py-4">
-                                    <div class="space-y-1.5">
+                                    <div class="space-y-2">
                                         <div
                                             v-for="member in team.members"
                                             :key="member.id_member"
-                                            class="flex items-center space-x-1.5"
+                                            class="space-y-0.5"
                                         >
-                                            <span
-                                                class="inline-block rounded border px-1.5 py-0.5 text-[8px] font-black tracking-wider uppercase"
-                                                :class="
-                                                    member.role === 'ketua'
-                                                        ? 'border-blue-100 bg-blue-50 text-blue-600'
-                                                        : 'border-slate-100 bg-slate-50 text-slate-500'
-                                                "
+                                            <div
+                                                class="flex items-center space-x-1.5"
                                             >
-                                                {{ member.role }}
-                                            </span>
-                                            <span
-                                                class="text-[11px] font-bold text-slate-700"
+                                                <span
+                                                    class="inline-block rounded border px-1.5 py-0.5 text-[8px] font-black tracking-wider uppercase"
+                                                    :class="
+                                                        member.role === 'ketua'
+                                                            ? 'border-blue-100 bg-blue-50 text-blue-600'
+                                                            : 'border-slate-100 bg-slate-50 text-slate-500'
+                                                    "
+                                                >
+                                                    {{ member.role }}
+                                                </span>
+                                                <span
+                                                    class="text-[11px] font-bold text-slate-700"
+                                                >
+                                                    {{ member.nama_peserta }}
+                                                </span>
+                                            </div>
+                                            <div
+                                                class="pl-2 text-[9px] font-semibold text-slate-400"
                                             >
-                                                {{ member.nama_peserta }}
-                                            </span>
+                                                NIM. {{ member.nim_peserta }} •
+                                                {{ member.jurusan || '-' }}
+                                            </div>
                                         </div>
                                         <div
                                             v-if="
