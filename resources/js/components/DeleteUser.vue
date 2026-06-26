@@ -49,7 +49,7 @@ const passwordInput = useTemplateRef('passwordInput');
                         Hapus Akun Saya
                     </Button>
                 </DialogTrigger>
-                <DialogContent class="rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl max-w-md">
+                <DialogContent class="rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl sm:max-w-md">
                     <Form
                         v-bind="ProfileController.destroy.form()"
                         reset-on-success

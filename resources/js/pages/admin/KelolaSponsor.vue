@@ -381,7 +381,7 @@ const toggleStatus = (sponsor) => {
 
         <!-- Add / Edit Modal -->
         <Dialog v-model:open="isOpenModal" @update:open="(val) => !val && closeModal()">
-            <DialogContent class="rounded-3xl max-w-lg p-0 overflow-hidden border-none shadow-2xl">
+            <DialogContent class="rounded-3xl sm:max-w-lg p-0 overflow-hidden border-none shadow-2xl">
                     <!-- Modal Header -->
                     <DialogHeader class="flex flex-row items-center justify-between border-b border-slate-100 px-6 py-5 space-y-0">
                         <DialogTitle class="text-base font-extrabold text-slate-800">

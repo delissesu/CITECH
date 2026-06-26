@@ -148,4 +148,56 @@ class AdminRegistrationVerificationTest extends TestCase
             'catatan_registrasi' => null,
         ]);
     }
+
+    public function test_admin_approve_registration_document_advances_team_to_penyisihan_if_payment_already_approved(): void
+    {
+        $admin = $this->createAdmin();
+        [$user, $tim, $doc] = $this->createTeamWithDocument();
+
+        // Create approved payment for the team
+        \App\Models\Pembayaran::create([
+            'id_tim' => $tim->id_tim,
+            'bukti_pembayaran' => 'bukti_pembayaran/test.png',
+            'status_pembayaran' => 'berhasil',
+            'uploaded_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->post(route('admin.persyaratan.update', $doc->id_registrasi), [
+                'status' => 'berhasil',
+            ]);
+
+        $response->assertRedirect();
+        
+        $this->assertDatabaseHas('tim', [
+            'id_tim' => $tim->id_tim,
+            'status_seleksi' => 'penyisihan',
+        ]);
+    }
+
+    public function test_admin_approve_registration_document_advances_team_to_penyisihan_if_payment_already_approved_with_capitalized_case(): void
+    {
+        $admin = $this->createAdmin();
+        [$user, $tim, $doc] = $this->createTeamWithDocument();
+
+        // Create approved payment for the team with capitalized status
+        \App\Models\Pembayaran::create([
+            'id_tim' => $tim->id_tim,
+            'bukti_pembayaran' => 'bukti_pembayaran/test.png',
+            'status_pembayaran' => 'Berhasil',
+            'uploaded_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->post(route('admin.persyaratan.update', $doc->id_registrasi), [
+                'status' => 'berhasil',
+            ]);
+
+        $response->assertRedirect();
+        
+        $this->assertDatabaseHas('tim', [
+            'id_tim' => $tim->id_tim,
+            'status_seleksi' => 'penyisihan',
+        ]);
+    }
 }

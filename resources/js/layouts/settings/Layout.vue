@@ -34,16 +34,17 @@ const backText = computed(() => 'Profil');
 <template>
     <CitechDashboardLayout :activeMenu="activeMenu" :role="role">
         <template #header-title>
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 sm:space-x-3">
                 <Link
                     :href="backRoute"
-                    class="inline-flex items-center space-x-1.5 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-black tracking-wide text-slate-600 transition hover:bg-slate-200"
+                    class="inline-flex items-center space-x-1 rounded-xl bg-slate-100 px-2.5 py-1.5 text-xs font-black tracking-wide text-slate-600 transition hover:bg-slate-200 sm:px-3"
                 >
                     <ArrowLeft class="h-3.5 w-3.5" />
-                    <span>Kembali ke {{ backText }}</span>
+                    <span class="hidden sm:inline">Kembali ke {{ backText }}</span>
+                    <span class="sm:hidden">Kembali</span>
                 </Link>
-                <span class="text-slate-300">|</span>
-                <h2 class="text-lg font-black tracking-wide text-slate-800">
+                <span class="text-slate-300 text-sm">|</span>
+                <h2 class="text-sm sm:text-lg font-black tracking-wide text-slate-800">
                     Pengaturan
                 </h2>
             </div>
@@ -53,16 +54,16 @@ const backText = computed(() => 'Profil');
             <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
                 <!-- Left Side Nav: Settings Tabs -->
                 <div class="lg:col-span-3">
-                    <div class="space-y-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_10px_35px_rgba(0,0,0,0.03)]">
+                    <div class="space-y-2 lg:space-y-4 rounded-3xl border border-slate-100 bg-white p-4 lg:p-6 shadow-[0_10px_35px_rgba(0,0,0,0.03)]">
                         <h3 class="text-[10px] font-black tracking-wider text-slate-400 uppercase">
                             Navigasi Pengaturan
                         </h3>
-                        <nav class="flex flex-col space-y-1">
+                        <nav class="flex flex-row space-x-2 overflow-x-auto lg:flex-col lg:space-x-0 lg:space-y-1 pb-1 lg:pb-0 scrollbar-none">
                             <Link
                                 v-for="item in sidebarNavItems"
                                 :key="toUrl(item.href)"
                                 :href="item.href"
-                                class="flex items-center space-x-3 rounded-xl px-4 py-3 text-xs font-black tracking-wide transition-all duration-200"
+                                class="flex-1 lg:flex-none text-center lg:text-left flex items-center justify-center lg:justify-start rounded-xl px-4 py-2.5 lg:py-3 text-xs font-black tracking-wide transition-all duration-200 whitespace-nowrap"
                                 :class="[
                                     isCurrentOrParentUrl(item.href) || (item.title === 'Password & Keamanan' && page.url.startsWith('/user/confirm-password'))
                                         ? 'bg-blue-50 text-blue-900 shadow-sm'

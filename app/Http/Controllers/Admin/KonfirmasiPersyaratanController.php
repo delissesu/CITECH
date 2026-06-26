@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\StatusPembayaran;
 use App\Enums\StatusRegistrasi;
+use App\Enums\StatusSeleksi;
 use App\Http\Controllers\Controller;
 use App\Models\DokumenRegistrasi;
 use App\Models\Tim;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -51,10 +54,27 @@ class KonfirmasiPersyaratanController extends Controller
             ]);
         }
 
-        $dokumen->update([
-            'status_registrasi' => $request->status,
-            'catatan_registrasi' => $request->status === StatusRegistrasi::Ditolak->value ? $request->catatan : null,
-        ]);
+        DB::transaction(function () use ($dokumen, $request) {
+            $dokumen->update([
+                'status_registrasi' => $request->status,
+                'catatan_registrasi' => $request->status === StatusRegistrasi::Ditolak->value ? $request->catatan : null,
+            ]);
+
+            // If approved, update team status_seleksi to 'penyisihan'
+            // but only if payment is also approved
+            if ($request->status === StatusRegistrasi::Berhasil->value) {
+                /** @var Tim $tim */
+                $tim = $dokumen->tim;
+                $pembayaranApproved = $tim->pembayaran
+                    && strtolower($tim->pembayaran->status_pembayaran) === StatusPembayaran::Berhasil->value;
+
+                if ($pembayaranApproved) {
+                    $tim->update([
+                        'status_seleksi' => StatusSeleksi::Penyisihan->value,
+                    ]);
+                }
+            }
+        });
 
         return redirect()->back()->with('success', 'Status dokumen berhasil diperbarui!');
     }

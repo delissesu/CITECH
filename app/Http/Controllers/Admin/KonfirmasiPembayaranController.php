@@ -66,7 +66,7 @@ class KonfirmasiPembayaranController extends Controller
                 /** @var Tim $tim */
                 $tim = $pembayaran->tim;
                 $dokumenApproved = $tim->dokumen_registrasi
-                    && $tim->dokumen_registrasi->status_registrasi === StatusRegistrasi::Berhasil->value;
+                    && strtolower($tim->dokumen_registrasi->status_registrasi) === StatusRegistrasi::Berhasil->value;
 
                 if ($dokumenApproved) {
                     $tim->update([

@@ -1321,9 +1321,9 @@ const clearAnggota2 = () => {
 
         <!-- Upload Modal Dialog -->
         <Dialog v-model:open="isUploadModalOpen" @update:open="(val) => !val && closeUploadModal()">
-            <DialogContent class="rounded-3xl max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+            <DialogContent class="rounded-3xl sm:max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
                 <!-- Header -->
-                <DialogHeader class="border-b border-slate-100 p-6 flex flex-row items-center justify-between space-y-0">
+                <DialogHeader class="border-b border-slate-100 p-4 sm:p-6 flex flex-row items-center justify-between space-y-0">
                     <div class="space-y-1 text-left">
                         <DialogTitle class="text-lg leading-tight font-black text-slate-900">
                             Unggah Berkas Persyaratan
@@ -1339,7 +1339,7 @@ const clearAnggota2 = () => {
                 <!-- Body / Upload Form -->
                 <form
                     @submit.prevent="submitDocument"
-                    class="space-y-6 p-6 text-left"
+                    class="space-y-6 p-4 sm:p-6 text-left"
                 >
                     <!-- Info Box -->
                     <div
@@ -1442,13 +1442,13 @@ const clearAnggota2 = () => {
 
                     <!-- Actions -->
                     <div
-                        class="flex items-center justify-end space-x-3 pt-2"
+                        class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:space-x-3 sm:gap-0 pt-2"
                     >
                         <Button
                             type="button"
                             variant="outline"
                             @click="closeUploadModal"
-                            class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                            class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 w-full sm:w-auto"
                         >
                             Batal
                         </Button>
@@ -1458,7 +1458,7 @@ const clearAnggota2 = () => {
                                 uploadForm.processing ||
                                 !uploadForm.file_dokumen
                             "
-                            class="cursor-pointer! flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] disabled:cursor-not-allowed! disabled:opacity-50"
+                            class="cursor-pointer! flex items-center justify-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] disabled:cursor-not-allowed! disabled:opacity-50 w-full sm:w-auto"
                         >
                             <UploadCloud class="h-3.5 w-3.5" />
                             <span>{{
@@ -1474,7 +1474,7 @@ const clearAnggota2 = () => {
 
         <!-- Confirm Cancel Modal -->
         <Dialog v-model:open="isConfirmCancelModalOpen" @update:open="(val) => !val && closeConfirmCancelModal()">
-            <DialogContent class="rounded-3xl max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]" :showCloseButton="false">
+            <DialogContent class="rounded-3xl sm:max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]" :showCloseButton="false">
                 <div class="flex items-start space-x-4">
                     <div
                         class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"
@@ -1494,18 +1494,18 @@ const clearAnggota2 = () => {
                     </div>
                 </div>
 
-                <DialogFooter class="flex items-center justify-end space-x-3 mt-4">
+                <DialogFooter class="mt-4 sm:space-x-3">
                     <button
                         type="button"
                         @click="closeConfirmCancelModal"
-                        class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                        class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 w-full sm:w-auto"
                     >
                         Tidak, Kembali
                     </button>
                     <button
                         type="button"
                         @click="confirmCancelDocument"
-                        class="cursor-pointer! flex items-center space-x-1.5 rounded-xl bg-red-600 px-6 py-2.5 text-xs font-black text-white hover:bg-red-700"
+                        class="cursor-pointer! flex items-center justify-center space-x-1.5 rounded-xl bg-red-600 px-6 py-2.5 text-xs font-black text-white hover:bg-red-700 w-full sm:w-auto"
                     >
                         <Trash2 class="h-3.5 w-3.5" />
                         <span>Ya, Batalkan</span>
@@ -1516,9 +1516,9 @@ const clearAnggota2 = () => {
 
         <!-- Payment Upload Modal Dialog -->
         <Dialog v-model:open="isPaymentUploadModalOpen" @update:open="(val) => !val && closePaymentUploadModal()">
-            <DialogContent class="rounded-3xl max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+            <DialogContent class="rounded-3xl sm:max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
                 <!-- Header -->
-                <DialogHeader class="border-b border-slate-100 p-6 flex flex-row items-center justify-between space-y-0">
+                <DialogHeader class="border-b border-slate-100 p-4 sm:p-6 flex flex-row items-center justify-between space-y-0">
                     <div class="space-y-1 text-left">
                         <DialogTitle class="text-lg leading-tight font-black text-slate-900">
                             Unggah Bukti Pembayaran
@@ -1534,7 +1534,7 @@ const clearAnggota2 = () => {
                 <!-- Body / Upload Form -->
                 <form
                     @submit.prevent="submitPayment"
-                    class="space-y-6 p-6 text-left"
+                    class="space-y-6 p-4 sm:p-6 text-left"
                 >
                     <!-- Drop / Select Area -->
                     <div
@@ -1604,13 +1604,13 @@ const clearAnggota2 = () => {
 
                     <!-- Actions -->
                     <div
-                        class="flex items-center justify-end space-x-3 pt-2"
+                        class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:space-x-3 sm:gap-0 pt-2"
                     >
                         <Button
                             type="button"
                             variant="outline"
                             @click="closePaymentUploadModal"
-                            class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                            class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 w-full sm:w-auto"
                         >
                             Batal
                         </Button>
@@ -1620,7 +1620,7 @@ const clearAnggota2 = () => {
                                 paymentForm.processing ||
                                 !paymentForm.bukti_pembayaran
                             "
-                            class="cursor-pointer! flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] disabled:cursor-not-allowed! disabled:opacity-50"
+                            class="cursor-pointer! flex items-center justify-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] disabled:cursor-not-allowed! disabled:opacity-50 w-full sm:w-auto"
                         >
                             <UploadCloud class="h-3.5 w-3.5" />
                             <span>{{
@@ -1636,7 +1636,7 @@ const clearAnggota2 = () => {
 
         <!-- Confirm Cancel Payment Modal -->
         <Dialog v-model:open="isConfirmCancelPaymentModalOpen" @update:open="(val) => !val && closeConfirmCancelPaymentModal()">
-            <DialogContent class="rounded-3xl max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]" :showCloseButton="false">
+            <DialogContent class="rounded-3xl sm:max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]" :showCloseButton="false">
                 <div class="flex items-start space-x-4">
                     <div
                         class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"
@@ -1656,18 +1656,18 @@ const clearAnggota2 = () => {
                     </div>
                 </div>
 
-                <DialogFooter class="flex items-center justify-end space-x-3 mt-4">
+                <DialogFooter class="mt-4 sm:space-x-3">
                     <button
                         type="button"
                         @click="closeConfirmCancelPaymentModal"
-                        class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                        class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 w-full sm:w-auto"
                     >
                         Tidak, Kembali
                     </button>
                     <button
                         type="button"
                         @click="confirmCancelPayment"
-                        class="cursor-pointer! flex items-center space-x-1.5 rounded-xl bg-red-600 px-6 py-2.5 text-xs font-black text-white hover:bg-red-700"
+                        class="cursor-pointer! flex items-center justify-center space-x-1.5 rounded-xl bg-red-600 px-6 py-2.5 text-xs font-black text-white hover:bg-red-700 w-full sm:w-auto"
                     >
                         <Trash2 class="h-3.5 w-3.5" />
                         <span>Ya, Batalkan</span>
@@ -1678,9 +1678,9 @@ const clearAnggota2 = () => {
 
         <!-- Proposal Submission Link drive Modal Dialog -->
         <Dialog v-model:open="isSubmissionModalOpen" @update:open="(val) => !val && closeSubmissionModal()">
-            <DialogContent class="rounded-3xl max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+            <DialogContent class="rounded-3xl sm:max-w-lg p-0 overflow-hidden border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
                 <!-- Header -->
-                <DialogHeader class="border-b border-slate-100 p-6 flex flex-row items-center justify-between space-y-0">
+                <DialogHeader class="border-b border-slate-100 p-4 sm:p-6 flex flex-row items-center justify-between space-y-0">
                     <div class="space-y-1 text-left">
                         <DialogTitle class="text-lg leading-tight font-black text-slate-900">
                             Kumpulkan Link Proposal
@@ -1696,7 +1696,7 @@ const clearAnggota2 = () => {
                 <!-- Body / Form -->
                 <form
                     @submit.prevent="triggerConfirmSubmission"
-                    class="space-y-5 p-6 text-left"
+                    class="space-y-5 p-4 sm:p-6 text-left"
                 >
                     <!-- Info Box -->
                     <div
@@ -1762,19 +1762,19 @@ const clearAnggota2 = () => {
 
                     <!-- Actions -->
                     <div
-                        class="flex items-center justify-end space-x-3 pt-2"
+                        class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:space-x-3 sm:gap-0 pt-2"
                     >
                         <Button
                             type="button"
                             variant="outline"
                             @click="closeSubmissionModal"
-                            class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                            class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 w-full sm:w-auto"
                         >
                             Batal
                         </Button>
                         <Button
                             type="submit"
-                            class="cursor-pointer! flex items-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d]"
+                            class="cursor-pointer! flex items-center justify-center space-x-2 rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-[#15233d] w-full sm:w-auto"
                         >
                             <UploadCloud class="h-3.5 w-3.5" />
                             <span>Kumpulkan Link</span>
@@ -1786,7 +1786,7 @@ const clearAnggota2 = () => {
 
         <!-- Double Confirm Submit Proposal Modal -->
         <Dialog v-model:open="isConfirmSubmissionModalOpen" @update:open="(val) => !val && closeConfirmSubmissionModal()">
-            <DialogContent class="rounded-3xl max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]" :showCloseButton="false">
+            <DialogContent class="rounded-3xl sm:max-w-md p-6 border-none shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]" :showCloseButton="false">
                 <div class="flex items-start space-x-4">
                     <div
                         class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600"
@@ -1817,11 +1817,11 @@ const clearAnggota2 = () => {
                     </div>
                 </div>
 
-                <DialogFooter class="flex items-center justify-end space-x-3 mt-4">
+                <DialogFooter class="mt-4 sm:space-x-3">
                     <button
                         type="button"
                         @click="closeConfirmSubmissionModal"
-                        class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                        class="cursor-pointer! rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 w-full sm:w-auto"
                     >
                         Periksa Kembali
                     </button>
@@ -1829,7 +1829,7 @@ const clearAnggota2 = () => {
                         type="button"
                         @click="submitProposal"
                         :disabled="submissionForm.processing"
-                        class="cursor-pointer! rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white hover:bg-[#15233d] disabled:cursor-not-allowed! disabled:opacity-50"
+                        class="cursor-pointer! flex items-center justify-center rounded-xl bg-[#1b2a4a] px-6 py-2.5 text-xs font-black text-white hover:bg-[#15233d] disabled:cursor-not-allowed! disabled:opacity-50 w-full sm:w-auto"
                     >
                         {{
                             submissionForm.processing
