@@ -12,13 +12,40 @@ import {
 } from '@lucide/vue';
 import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
 
-defineProps({
-    statistics: Object,
-    latestPembayaran: Array,
-    latestPersyaratan: Array,
-});
+interface Statistics {
+    totalTim: number;
+    totalTimVerified: number;
+    totalSubmission: number;
+    persyaratanPending: number;
+    pembayaranPending: number;
+    totalSponsor: number;
+}
 
-const formatDate = (dateStr: string) => {
+interface Tim {
+    nama_tim: string;
+    universitas: string;
+    batch: number;
+}
+
+interface Pembayaran {
+    id_pembayaran: number;
+    tim?: Tim;
+    uploaded_at?: string;
+}
+
+interface Persyaratan {
+    id_registrasi: number;
+    tim?: Tim;
+    uploaded_at?: string;
+}
+
+defineProps<{
+    statistics: Statistics;
+    latestPembayaran: Pembayaran[];
+    latestPersyaratan: Persyaratan[];
+}>();
+
+const formatDate = (dateStr: string | undefined) => {
     if (!dateStr) {
         return '-';
     }

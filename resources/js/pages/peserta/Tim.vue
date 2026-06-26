@@ -124,7 +124,6 @@ const handlePaymentFileChange = (e) => {
 const triggerPaymentFileInput = () => {
     paymentFileInput.value.click();
 };
-
 const submitPayment = () => {
     paymentForm.post(route('peserta.tim.pembayaran.store'), {
         onSuccess: () => {
@@ -134,10 +133,7 @@ const submitPayment = () => {
             const teamName = props.userTeam?.nama_tim || '';
             const university = props.userTeam?.universitas || '';
             const waMessage = `Halo Panitia CITECH 2026, saya perwakilan dari tim ${teamName} dari ${university} ingin mengonfirmasi bahwa kami telah melakukan pembayaran pendaftaran dan mengunggah bukti pembayaran di website. Mohon untuk diverifikasi. Terima kasih!`;
-            window.open(
-                `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`,
-                '_blank',
-            );
+            window.location.href = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
         },
     });
 };

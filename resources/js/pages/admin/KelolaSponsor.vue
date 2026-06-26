@@ -22,20 +22,37 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-const props = defineProps({
-    sponsors: {
-        type: Array,
-        default: () => [],
-    },
-});
+interface Sponsor {
+    id_sponsor: number;
+    nama_sponsor: string;
+    logo_sponsor: string | null;
+    link_sponsor?: string | null;
+    order: number;
+    is_active: boolean;
+}
+
+const props = withDefaults(
+    defineProps<{
+        sponsors?: Sponsor[];
+    }>(),
+    {
+        sponsors: () => [],
+    }
+);
 
 // Modal State
 const isOpenModal = ref(false);
 const isEditMode = ref(false);
-const editId = ref(null);
+const editId = ref<number | null>(null);
 
 // Form Setup
-const form = useForm({
+const form = useForm<{
+    nama_sponsor: string;
+    logo_sponsor: File | null;
+    link_sponsor: string;
+    order: number;
+    is_active: boolean;
+}>({
     nama_sponsor: '',
     logo_sponsor: null,
     link_sponsor: '',
@@ -44,8 +61,8 @@ const form = useForm({
 });
 
 // Preview State
-const logoPreview = ref(null);
-const fileInput = ref(null);
+const logoPreview = ref<string | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
 
 // Drag & Drop State
 const isDragging = ref(false);
@@ -59,7 +76,7 @@ const openAddModal = () => {
     isOpenModal.value = true;
 };
 
-const openEditModal = (sponsor) => {
+const openEditModal = (sponsor: Sponsor) => {
     isEditMode.value = true;
     editId.value = sponsor.id_sponsor;
     logoPreview.value = sponsor.logo_sponsor
@@ -85,18 +102,19 @@ const closeModal = () => {
 
 // File handling
 const triggerFileSelect = () => {
-    fileInput.value.click();
+    fileInput.value?.click();
 };
 
-const handleFileChange = (e) => {
-    const file = e.target.files[0];
+const handleFileChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
 
     if (file) {
         processFile(file);
     }
 };
 
-const processFile = (file) => {
+const processFile = (file: File) => {
     if (!file.type.startsWith('image/')) {
         form.setError('logo_sponsor', 'File harus berupa gambar.');
 
@@ -114,12 +132,12 @@ const processFile = (file) => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        logoPreview.value = e.target.result;
+        logoPreview.value = e.target?.result as string | null;
     };
     reader.readAsDataURL(file);
 };
 
-const onDragOver = (e) => {
+const onDragOver = (e: DragEvent) => {
     e.preventDefault();
     isDragging.value = true;
 };
@@ -128,10 +146,10 @@ const onDragLeave = () => {
     isDragging.value = false;
 };
 
-const onDrop = (e) => {
+const onDrop = (e: DragEvent) => {
     e.preventDefault();
     isDragging.value = false;
-    const file = e.dataTransfer.files[0];
+    const file = e.dataTransfer?.files[0];
 
     if (file) {
         processFile(file);
@@ -143,7 +161,7 @@ const removeSelectedLogo = () => {
     logoPreview.value =
         isEditMode.value &&
         props.sponsors.find((s) => s.id_sponsor === editId.value)?.logo_sponsor
-            ? `/storage/${props.sponsors.find((s) => s.id_sponsor === editId.value).logo_sponsor}`
+            ? `/storage/${props.sponsors.find((s) => s.id_sponsor === editId.value)?.logo_sponsor}`
             : null;
 
     if (fileInput.value) {
@@ -155,7 +173,7 @@ const removeSelectedLogo = () => {
 const handleSubmit = () => {
     if (isEditMode.value) {
         // Laravel multipart bug workaround: must use POST but can spoof update or call post endpoint
-        form.post(route('admin.kelola-sponsor.update', editId.value), {
+        form.post(route('admin.kelola-sponsor.update', editId.value!), {
             onSuccess: () => closeModal(),
             forceFormData: true,
         });
@@ -169,23 +187,25 @@ const handleSubmit = () => {
 
 // Delete Logic
 const showConfirmDelete = ref(false);
-const deleteId = ref(null);
+const deleteId = ref<number | null>(null);
 const deleteSponsorName = ref('');
 
-const confirmDelete = (sponsor) => {
+const confirmDelete = (sponsor: Sponsor) => {
     deleteId.value = sponsor.id_sponsor;
     deleteSponsorName.value = sponsor.nama_sponsor;
     showConfirmDelete.value = true;
 };
 
 const executeDelete = () => {
-    router.delete(route('admin.kelola-sponsor.destroy', deleteId.value), {
-        onSuccess: () => {
-            showConfirmDelete.value = false;
-            deleteId.value = null;
-            deleteSponsorName.value = '';
-        },
-    });
+    if (deleteId.value !== null) {
+        router.delete(route('admin.kelola-sponsor.destroy', deleteId.value), {
+            onSuccess: () => {
+                showConfirmDelete.value = false;
+                deleteId.value = null;
+                deleteSponsorName.value = '';
+            },
+        });
+    }
 };
 
 const cancelDelete = () => {
@@ -195,7 +215,7 @@ const cancelDelete = () => {
 };
 
 // Toggle Visiblity directly
-const toggleStatus = (sponsor) => {
+const toggleStatus = (sponsor: Sponsor) => {
     router.post(
         route('admin.kelola-sponsor.update', sponsor.id_sponsor),
         {

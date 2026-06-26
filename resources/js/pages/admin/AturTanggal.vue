@@ -6,11 +6,17 @@ import CitechDashboardLayout from '@/components/CitechDashboardLayout.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-const props = defineProps({
-    timelines: Array,
-});
+interface Timeline {
+    tahap: string;
+    tanggal_mulai?: string;
+    tanggal_selesai?: string;
+}
 
-const tahapLabels = {
+const props = defineProps<{
+    timelines?: Timeline[];
+}>();
+
+const tahapLabels: Record<string, string> = {
     pendaftaran_b1: 'Pendaftaran Batch 1',
     pendaftaran_b2: 'Pendaftaran Batch 2',
     penyisihan: 'Babak Penyisihan',
@@ -24,9 +30,11 @@ const tahapOrder = [
     'penyisihan',
     'final',
     'awarding',
-];
+] as const;
 
-const getTimelineData = (tahap) => {
+type Tahap = typeof tahapOrder[number];
+
+const getTimelineData = (tahap: Tahap) => {
     const tl = props.timelines?.find((t) => t.tahap === tahap);
 
     return {
@@ -39,14 +47,14 @@ const getTimelineData = (tahap) => {
     };
 };
 
-const formData = {};
+const formData: Record<string, string> = {};
 tahapOrder.forEach((tahap) => {
     const data = getTimelineData(tahap);
     formData[`tanggal_mulai_${tahap}`] = data.tanggal_mulai;
     formData[`tanggal_selesai_${tahap}`] = data.tanggal_selesai;
 });
 
-const form = useForm(formData);
+const form = useForm<Record<string, string>>(formData);
 const showConfirm = ref(false);
 
 const handleSubmit = () => {

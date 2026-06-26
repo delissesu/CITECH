@@ -15,6 +15,7 @@ import {
     X,
 } from '@lucide/vue';
 import { ref, computed, onMounted } from 'vue';
+import { Toaster } from '@/components/ui/sonner';
 
 const props = defineProps({
     activeMenu: {
@@ -280,6 +281,7 @@ const logout = () => {
                 <slot />
             </main>
         </div>
+        <Toaster />
     </div>
 </template>
 
