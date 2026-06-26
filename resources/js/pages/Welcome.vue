@@ -478,7 +478,7 @@ const formattedTimelineItems = computed(() => {
                     </template>
                     <template v-else>
                         <Link
-                            :href="route('login')"
+                            :href="route('register')"
                             class="inline-block rounded-lg bg-[#3769a6] px-6 py-2.5 text-xs font-bold text-white transition-all duration-300 hover:scale-[1.05] hover:bg-[#2b5487] hover:shadow-lg hover:shadow-blue-500/25 active:scale-95"
                         >
                             Daftar
