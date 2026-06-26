@@ -135,6 +135,7 @@ class ProfileUpdateTest extends TestCase
     public function test_profile_update_does_not_update_team_leader_name_when_document_approved()
     {
         $user = User::factory()->create();
+        $originalName = $user->name;
         $tim = Tim::create([
             'id_user' => $user->id_user,
             'nama_tim' => 'Test Team 456',
@@ -166,7 +167,7 @@ class ProfileUpdateTest extends TestCase
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('member_tim', [
             'id_member' => $member->id_member,
-            'nama_peserta' => $user->name,
+            'nama_peserta' => $originalName,
         ]);
     }
 }

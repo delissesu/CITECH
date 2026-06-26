@@ -19,24 +19,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/debug-request', function () {
-    return response()->json([
-        'url' => request()->url(),
-        'fullUrl' => request()->fullUrl(),
-        'scheme' => request()->getScheme(),
-        'secure' => request()->secure(),
-        'host' => request()->getHost(),
-        'port' => request()->getPort(),
-        'app_url_config' => config('app.url'),
-        'headers' => request()->headers->all(),
-        'server' => array_intersect_key($_SERVER, array_flip([
-            'HTTP_HOST', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED_PROTO', 'HTTP_X_FORWARDED_PORT',
-            'SERVER_PORT', 'REQUEST_SCHEME', 'HTTPS', 'SERVER_NAME', 'SERVER_ADDR',
-        ])),
-        'app_key' => substr(config('app.key') ?: '', 0, 15).'...',
-    ]);
-});
-
 Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');

@@ -1,1 +1,0 @@
-import{$ as e,B as t,p as n,w as r,x as i,yt as a}from"./app-D10Xolcp.js";var o={class:`text-sm text-red-600`},s={__name:`InputError`,props:{message:{type:String}},setup(s){return(c,l)=>e((t(),r(`div`,null,[i(`p`,o,a(s.message),1)],512)),[[n,s.message]])}};export{s as t};
