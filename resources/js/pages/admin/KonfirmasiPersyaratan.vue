@@ -644,7 +644,7 @@ const submitRejection = () => {
                         <DialogTitle
                             class="text-lg leading-tight font-black text-slate-900"
                         >
-                            Detail Anggota Kelompok
+                            Detail Anggota Tim
                         </DialogTitle>
                         <p
                             class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
