@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tim;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -57,7 +58,7 @@ class SubmissionController extends Controller
             $sheet->setCellValue([2, $row], $team->nama_tim);
             $sheet->setCellValue([3, $row], $team->universitas);
             $sheet->setCellValue([4, $row], $team->submission ? $team->submission->link_file_submission : '-');
-            $sheet->setCellValue([5, $row], $team->submission && $team->submission->uploaded_at ? \Illuminate\Support\Carbon::parse($team->submission->uploaded_at)->format('Y-m-d H:i:s') : '-');
+            $sheet->setCellValue([5, $row], $team->submission && $team->submission->uploaded_at ? Carbon::parse($team->submission->uploaded_at)->format('Y-m-d H:i:s') : '-');
             $row++;
         }
 
