@@ -42,13 +42,10 @@ const formatTimelineDate = (start, end) => {
     const startD = new Date(start);
     const endD = new Date(end);
 
-    // If end date is at exactly midnight (00:00:00), display as the previous day
-    // e.g. "2026-07-19 00:00:00" should display as "18 Juli" (deadline is 18 Juli 23:59)
-    if (endD.getHours() === 0 && endD.getMinutes() === 0 && endD.getSeconds() === 0) {
-        endD.setDate(endD.getDate() - 1);
-    }
-
-    const options = { day: 'numeric', month: 'long' };
+    // Use UTC timezone to avoid the browser's timezone offset shifting the day
+    // The admin enters dates in WIB, but Laravel (UTC timezone) serializes
+    // them with Z suffix. Formatting with timeZone: 'UTC' reads the original values.
+    const options = { day: 'numeric', month: 'long', timeZone: 'UTC' };
     const yearOptions = { year: 'numeric' };
 
     const startStr = startD.toLocaleDateString('id-ID', options);

@@ -219,14 +219,11 @@ const formattedTimelineItems = computed(() => {
         const start = new Date(startStr);
         const end = new Date(endStr);
 
-        // If end date is at exactly midnight (00:00:00), display as the previous day
-        // e.g. "2026-07-19 00:00:00" should display as "18 Juli" (deadline is 18 Juli 23:59)
-        if (end.getHours() === 0 && end.getMinutes() === 0 && end.getSeconds() === 0) {
-            end.setDate(end.getDate() - 1);
-        }
-
-        const getMonthName = (date) => {
-            const m = date.getMonth();
+        // Use UTC getters to avoid timezone conversion
+        // The admin enters dates in WIB, but Laravel (UTC timezone) serializes
+        // them with Z suffix. Using UTC getters reads the original date values
+        // without the browser's timezone offset shifting the day.
+        const getMonthName = (monthIndex) => {
             const monthsFull = [
                 'Januari',
                 'Februari',
@@ -242,18 +239,25 @@ const formattedTimelineItems = computed(() => {
                 'Desember',
             ];
 
-            return monthsFull[m];
+            return monthsFull[monthIndex];
         };
 
-        if (start.getFullYear() === end.getFullYear()) {
-            if (start.getMonth() === end.getMonth()) {
-                return `${start.getDate()} - ${end.getDate()} ${getMonthName(start)} ${start.getFullYear()}`;
+        const startDay = start.getUTCDate();
+        const startMonth = start.getUTCMonth();
+        const startYear = start.getUTCFullYear();
+        const endDay = end.getUTCDate();
+        const endMonth = end.getUTCMonth();
+        const endYear = end.getUTCFullYear();
+
+        if (startYear === endYear) {
+            if (startMonth === endMonth) {
+                return `${startDay} - ${endDay} ${getMonthName(startMonth)} ${startYear}`;
             } else {
-                return `${start.getDate()} ${getMonthName(start)} - ${end.getDate()} ${getMonthName(end)} ${start.getFullYear()}`;
+                return `${startDay} ${getMonthName(startMonth)} - ${endDay} ${getMonthName(endMonth)} ${startYear}`;
             }
         }
 
-        return `${start.getDate()} ${getMonthName(start)} ${start.getFullYear()} - ${end.getDate()} ${getMonthName(end)} ${end.getFullYear()}`;
+        return `${startDay} ${getMonthName(startMonth)} ${startYear} - ${endDay} ${getMonthName(endMonth)} ${endYear}`;
     };
 
     const b1 = props.allTimelines.find((t) => t.tahap === 'pendaftaran_b1');
@@ -303,8 +307,12 @@ const formattedTimelineItems = computed(() => {
 
     if (final && final.tanggal_mulai) {
         const finalStart = new Date(final.tanggal_mulai);
-        const dMinus1 = new Date(finalStart);
-        dMinus1.setDate(dMinus1.getDate() - 1);
+        // Calculate pengumuman as 1 day before final start (in UTC to match DB values)
+        const dMinus1 = new Date(Date.UTC(
+            finalStart.getUTCFullYear(),
+            finalStart.getUTCMonth(),
+            finalStart.getUTCDate() - 1,
+        ));
         const monthsFull = [
             'Januari',
             'Februari',
@@ -319,8 +327,8 @@ const formattedTimelineItems = computed(() => {
             'November',
             'Desember',
         ];
-        pengumumanDate = `${dMinus1.getDate()} ${monthsFull[dMinus1.getMonth()]} ${dMinus1.getFullYear()}`;
-        tmDate = `${finalStart.getDate()} ${monthsFull[finalStart.getMonth()]} ${finalStart.getFullYear()}`;
+        pengumumanDate = `${dMinus1.getUTCDate()} ${monthsFull[dMinus1.getUTCMonth()]} ${dMinus1.getUTCFullYear()}`;
+        tmDate = `${finalStart.getUTCDate()} ${monthsFull[finalStart.getUTCMonth()]} ${finalStart.getUTCFullYear()}`;
     }
 
     items.push({

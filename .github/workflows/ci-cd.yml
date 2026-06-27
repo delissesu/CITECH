@@ -76,6 +76,7 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
             git fetch origin main
             git reset --hard origin/main
+            npm run build
             docker compose build app
             docker compose up -d --remove-orphans
             if [ "${{ secrets.DEPLOY_MIGRATIONS }}" = "true" ]; then
