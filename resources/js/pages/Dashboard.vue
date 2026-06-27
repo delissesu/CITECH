@@ -41,6 +41,13 @@ const formatTimelineDate = (start, end) => {
 
     const startD = new Date(start);
     const endD = new Date(end);
+
+    // If end date is at exactly midnight (00:00:00), display as the previous day
+    // e.g. "2026-07-19 00:00:00" should display as "18 Juli" (deadline is 18 Juli 23:59)
+    if (endD.getHours() === 0 && endD.getMinutes() === 0 && endD.getSeconds() === 0) {
+        endD.setDate(endD.getDate() - 1);
+    }
+
     const options = { day: 'numeric', month: 'long' };
     const yearOptions = { year: 'numeric' };
 

@@ -44,33 +44,20 @@ const seconds = ref(0);
 let timer = null;
 
 const targetDate = computed(() => {
-    if (props.activeTimeline && props.activeTimeline.tanggal_selesai) {
-        return new Date(props.activeTimeline.tanggal_selesai);
-    }
-
-    // Fallback date
-    return new Date('2026-07-18 23:59:59');
-});
-
-const activeStageName = computed(() => {
-    if (props.activeTimeline) {
-        switch (props.activeTimeline.tahap) {
-            case 'pendaftaran_b1':
-                return 'Batch 1 Pendaftaran';
-            case 'pendaftaran_b2':
-                return 'Batch 2 Pendaftaran';
-            case 'penyisihan':
-                return 'Pengumpulan Berkas';
-            case 'final':
-                return 'Babak Final CITECH';
-            case 'awarding':
-                return 'Acara Awarding';
-            default:
-                return 'CITECH 2026';
+    // Always count down to the end of "Pengumpulan Berkas" (penyisihan)
+    if (props.allTimelines && props.allTimelines.length > 0) {
+        const penyisihan = props.allTimelines.find((t) => t.tahap === 'penyisihan');
+        if (penyisihan && penyisihan.tanggal_selesai) {
+            return new Date(penyisihan.tanggal_selesai);
         }
     }
 
-    return 'CITECH 2026';
+    // Fallback date
+    return new Date('2026-08-01 23:59:59');
+});
+
+const activeStageName = computed(() => {
+    return 'Penutupan Pengumpulan Berkas';
 });
 
 const calculateTimeLeft = () => {
@@ -231,17 +218,13 @@ const formattedTimelineItems = computed(() => {
 
         const start = new Date(startStr);
         const end = new Date(endStr);
-        const months = [
-            'Juni',
-            'Juli',
-            'Agustus',
-            'September',
-            'Oktober',
-            'November',
-            'Desember',
-        ];
 
-        // Since we know the database dates are in June-August:
+        // If end date is at exactly midnight (00:00:00), display as the previous day
+        // e.g. "2026-07-19 00:00:00" should display as "18 Juli" (deadline is 18 Juli 23:59)
+        if (end.getHours() === 0 && end.getMinutes() === 0 && end.getSeconds() === 0) {
+            end.setDate(end.getDate() - 1);
+        }
+
         const getMonthName = (date) => {
             const m = date.getMonth();
             const monthsFull = [
