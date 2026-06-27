@@ -19,7 +19,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Lupa Kata Sandi" />
+    <Head title="Lupa Password - CITECH 2026" />
 
     <div
         class="flex min-h-screen items-center justify-center bg-slate-100 p-2 font-sans sm:p-6 md:p-8"

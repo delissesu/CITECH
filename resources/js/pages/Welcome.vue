@@ -1,6 +1,5 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import WhatsAppFab from '@/components/WhatsAppFab.vue';
 import {
     Code,
     Users,
@@ -18,6 +17,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion';
+import WhatsAppFab from '@/components/WhatsAppFab.vue';
 
 const props = defineProps({
     canLogin: Boolean,
@@ -381,7 +381,25 @@ const formattedTimelineItems = computed(() => {
 </script>
 
 <template>
-    <Head title="Carnival Technology UNEJ" />
+    <Head>
+        <title>CITECH 2026 - Carnival Technology UNEJ | Kompetisi Web Design Nasional</title>
+        <meta name="description" content="CITECH (Carnival Technology) adalah kompetisi Web Design tingkat nasional bergengsi yang diselenggarakan oleh UKM LAOS Universitas Jember (UNEJ). Salurkan kreativitas dan inovasi tim Anda di CITECH!" />
+        <meta name="keywords" content="CITECH, CITECH UNEJ, Carnival Technology, Kompetisi Web Design, Lomba Web Design Nasional, Universitas Jember, LAOS UNEJ, Citech Web, Lomba IT, Web Design 2026" />
+        <meta name="author" content="UKM LAOS UNEJ" />
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="CITECH 2026 - Carnival Technology UNEJ | Kompetisi Web Design Nasional" />
+        <meta property="og:description" content="Kompetisi Web Design nasional bergengsi tingkat mahasiswa se-Indonesia oleh UKM LAOS Universitas Jember. Daftarkan tim Anda sekarang!" />
+        <meta property="og:image" content="/assets/logo-citech.png" />
+        <meta property="og:image:alt" content="Logo CITECH 2026" />
+        
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="CITECH 2026 - Carnival Technology UNEJ | Kompetisi Web Design Nasional" />
+        <meta name="twitter:description" content="Kompetisi Web Design nasional bergengsi tingkat mahasiswa se-Indonesia oleh UKM LAOS Universitas Jember. Daftarkan tim Anda sekarang!" />
+        <meta name="twitter:image" content="/assets/logo-citech.png" />
+    </Head>
 
     <div
         class="animate-page-fade relative min-h-screen overflow-x-hidden bg-slate-50/20 font-sans text-slate-700"

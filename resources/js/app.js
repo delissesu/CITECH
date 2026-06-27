@@ -11,22 +11,27 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 const showFlashToast = (page) => {
     const flash = page?.props?.flash;
+
     if (flash) {
         if (flash.success) {
             toast.success(flash.success);
             page.props.flash.success = null;
         }
+
         if (flash.error) {
             toast.error(flash.error);
             page.props.flash.error = null;
         }
+
         if (flash.toast) {
             const t = flash.toast;
+
             if (t?.type && t?.message) {
                 toast[t.type](t.message);
             } else if (typeof t === 'string') {
                 toast.success(t);
             }
+
             page.props.flash.toast = null;
         }
     }
@@ -34,6 +39,21 @@ const showFlashToast = (page) => {
 
 router.on('finish', () => {
     showFlashToast(router.page);
+});
+
+router.on('error', (event) => {
+    const errors = event.detail.errors;
+
+    if (errors && Object.keys(errors).length > 0) {
+        const firstError = Object.values(errors)[0];
+        toast.error(typeof firstError === 'string' ? firstError : 'Gagal memproses data. Silakan periksa kembali input Anda.');
+    } else {
+        toast.error('Gagal melakukan tindakan. Silakan periksa kembali data Anda.');
+    }
+});
+
+router.on('invalid', () => {
+    toast.error('Terjadi kesalahan pada server. Silakan coba lagi.');
 });
 
 createInertiaApp({

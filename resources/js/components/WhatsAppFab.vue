@@ -14,6 +14,7 @@ const props = defineProps({
 
 const waLink = computed(() => {
     const base = `https://wa.me/${props.phoneNumber}`;
+
     return props.message ? `${base}?text=${encodeURIComponent(props.message)}` : base;
 });
 </script>

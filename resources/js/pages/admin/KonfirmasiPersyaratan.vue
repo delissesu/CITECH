@@ -38,9 +38,11 @@ const openTeamDetails = (team) => {
               if (a.role === 'ketua') {
                   return -1;
               }
+
               if (b.role === 'ketua') {
                   return 1;
               }
+
               return a.id_member - b.id_member;
           })
         : [];

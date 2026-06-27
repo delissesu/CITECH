@@ -33,7 +33,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Masuk Ke Akun" />
+    <Head title="Masuk - CITECH 2026" />
 
     <div
         class="flex min-h-screen items-center justify-center bg-slate-100 p-2 font-sans sm:p-6 md:p-8"
