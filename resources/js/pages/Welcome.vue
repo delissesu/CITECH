@@ -165,7 +165,7 @@ const faqs = [
     },
     {
         q: 'Dimana saya dapat melihat informasi terbaru?',
-        a: 'Informasi terbaru akan selalu diperbarui di dashboard peserta website ini, serta dipublikasikan melalui akun Instagram resmi kami @citech_unej.',
+        a: 'Informasi terbaru akan selalu diperbarui di dashboard peserta website ini, serta dipublikasikan melalui akun Instagram resmi kami <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/citech_laos/">@citech_laos</a>.',
     },
 ];
 
@@ -1259,7 +1259,7 @@ const formattedTimelineItems = computed(() => {
                         <AccordionContent
                             class="border-t border-slate-100/80 px-6 pt-3 pb-5 text-xs leading-relaxed text-slate-500 md:text-sm"
                         >
-                            {{ faq.a }}
+                            <span v-html="faq.a"></span>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
@@ -1303,7 +1303,8 @@ const formattedTimelineItems = computed(() => {
                         <div class="flex space-x-3.5 pt-2">
                             <!-- Social Media Links (Simulated inline SVGs for stability) -->
                             <a
-                                href="#"
+                                href="https://www.instagram.com/citech_laos/"
+                                target="_blank"
                                 class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-800 text-slate-400 transition-all duration-300 hover:scale-110 hover:border-slate-600 hover:bg-slate-800 hover:text-white"
                             >
                                 <svg
@@ -1335,7 +1336,8 @@ const formattedTimelineItems = computed(() => {
                                 </svg>
                             </a>
                             <a
-                                href="#"
+                                href="https://www.linkedin.com/company/ukm-linux-and-open-source/"
+                                target="_blank"
                                 class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-800 text-slate-400 transition-all duration-300 hover:scale-110 hover:border-slate-600 hover:bg-slate-800 hover:text-white"
                             >
                                 <svg
@@ -1360,7 +1362,8 @@ const formattedTimelineItems = computed(() => {
                                 </svg>
                             </a>
                             <a
-                                href="#"
+                                href="https://github.com/UKM-LAOS"
+                                target="_blank"
                                 class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-800 text-slate-400 transition-all duration-300 hover:scale-110 hover:border-slate-600 hover:bg-slate-800 hover:text-white"
                             >
                                 <svg
@@ -1430,8 +1433,8 @@ const formattedTimelineItems = computed(() => {
                             <li>UKM LAOS UNEJ</li>
                             <li>Universitas Jember</li>
                             <li class="text-blue-400 hover:underline">
-                                <a href="mailto:citech@unej.ac.id"
-                                    >citech@unej.ac.id</a
+                                <a href="mailto:ukm_laos@unej.ac.id"
+                                    >ukm_laos@unej.ac.id</a
                                 >
                             </li>
                         </ul>
